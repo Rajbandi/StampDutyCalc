@@ -300,16 +300,18 @@ class _ToolCard extends StatelessWidget {
                   // tiles have consistent vertical alignment
                   SizedBox(
                     height: 32, // 12px font * 1.2 line height * 2 lines
-                    child: Text(
-                      tool.name,
-                      textAlign: TextAlign.center,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        height: 1.2,
-                        fontSize: 12,
+                    child: Center(
+                      child: Text(
+                        tool.name,
+                        textAlign: TextAlign.center,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          height: 1.2,
+                          fontSize: 12,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
