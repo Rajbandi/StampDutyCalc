@@ -151,7 +151,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _SectionTitle('About'),
           ListTile(
             leading: const Icon(Icons.directions_car),
-            title: const Text('Vehicle Stamp Duty'),
+            title: const Text('Vehicle Calculator'),
             subtitle: const Text('Version 1.0.0'),
           ),
           ListTile(
