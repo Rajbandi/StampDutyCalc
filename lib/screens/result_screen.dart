@@ -53,7 +53,7 @@ class _ResultScreenState extends State<ResultScreen> {
           ),
           IconButton(
             icon: const Icon(Icons.share),
-            tooltip: 'Share as image',
+            tooltip: 'Share or save as image',
             onPressed: () => _shareAsImage(context),
           ),
         ],
