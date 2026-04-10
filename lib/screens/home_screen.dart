@@ -158,7 +158,10 @@ class _HomeScreenState extends State<HomeScreen> {
         slivers: [
           SliverAppBar.large(
             title: Text(
-              'Vehicle Calculator',
+              userMode.mode == UserMode.dealer &&
+                      userMode.businessName.isNotEmpty
+                  ? userMode.businessName
+                  : 'Vehicle Calculator',
               style: theme.textTheme.headlineMedium?.copyWith(
                 fontWeight: FontWeight.w700,
               ),
