@@ -17,6 +17,9 @@ class Tool {
   final IconData icon;
   final ToolCategory category;
   final bool needsCountry;
+  /// Country codes where this tool is available.
+  /// null = available in all countries
+  final List<String>? availableIn;
 
   const Tool({
     required this.id,
@@ -25,7 +28,14 @@ class Tool {
     required this.icon,
     required this.category,
     this.needsCountry = false,
+    this.availableIn,
   });
+
+  bool isAvailableIn(String? countryCode) {
+    if (countryCode == null) return true;
+    if (availableIn == null) return true;
+    return availableIn!.contains(countryCode);
+  }
 }
 
 /// All available tools in the app
@@ -37,6 +47,7 @@ class Tools {
     icon: Icons.receipt_long,
     category: ToolCategory.buying,
     needsCountry: true,
+    availableIn: ['AU'], // NZ has no stamp duty
   );
 
   static const onRoad = Tool(
@@ -55,6 +66,7 @@ class Tools {
     icon: Icons.compare_arrows,
     category: ToolCategory.compare,
     needsCountry: true,
+    availableIn: ['AU'], // NZ has only 1 region
   );
 
   static const lct = Tool(
@@ -64,6 +76,7 @@ class Tools {
     icon: Icons.diamond,
     category: ToolCategory.buying,
     needsCountry: true,
+    availableIn: ['AU'], // AU-only tax
   );
 
   static const novatedLease = Tool(
@@ -72,6 +85,7 @@ class Tools {
     description: 'Salary packaging savings',
     icon: Icons.business_center,
     category: ToolCategory.finance,
+    availableIn: ['AU'], // AU-specific FBT laws
   );
 
   static const fuelCost = Tool(
@@ -119,8 +133,13 @@ class Tools {
     evVsIce,
   ];
 
-  static List<Tool> byCategory(ToolCategory cat) =>
-      all.where((t) => t.category == cat).toList();
+  static List<Tool> byCategory(ToolCategory cat, {String? countryCode}) =>
+      all
+          .where((t) => t.category == cat && t.isAvailableIn(countryCode))
+          .toList();
+
+  static List<Tool> availableFor(String? countryCode) =>
+      all.where((t) => t.isAvailableIn(countryCode)).toList();
 
   static Tool? byId(String id) =>
       all.where((t) => t.id == id).firstOrNull;

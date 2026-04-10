@@ -78,8 +78,11 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     }
 
-    final favouriteTools =
-        Tools.all.where((t) => _favourites.contains(t.id)).toList();
+    final countryCode = provider.selectedCountry?.code;
+    final favouriteTools = Tools.all
+        .where((t) =>
+            _favourites.contains(t.id) && t.isAvailableIn(countryCode))
+        .toList();
 
     return Scaffold(
       body: CustomScrollView(
@@ -203,8 +206,9 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Widget> _buildCategorySections(
       BuildContext context, CalculatorProvider provider) {
     final widgets = <Widget>[];
+    final countryCode = provider.selectedCountry?.code;
     for (final cat in ToolCategory.values) {
-      final tools = Tools.byCategory(cat);
+      final tools = Tools.byCategory(cat, countryCode: countryCode);
       if (tools.isEmpty) continue;
       widgets.add(_SectionHeader(cat.label));
       widgets.add(SliverPadding(
