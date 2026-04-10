@@ -1,0 +1,398 @@
+{
+  "version": "2026.1",
+  "lastUpdated": "2026-04-01",
+  "countries": [
+    {
+      "code": "AU",
+      "name": "Australia",
+      "currency": "AUD",
+      "currencySymbol": "$",
+      "flag": "au",
+      "states": [
+        {
+          "code": "NSW",
+          "name": "New South Wales",
+          "vehicleFields": ["vehicleType"],
+          "rates": [
+            {
+              "dateFrom": "2024-07-01",
+              "vehicleType": "passenger",
+              "slabs": [
+                { "min": 0, "max": 45000, "rate": 3, "per": 100 },
+                { "min": 45000, "max": null, "rate": 5, "per": 100, "base": 1350, "chargeFrom": 45000 }
+              ]
+            },
+            {
+              "dateFrom": "2024-07-01",
+              "vehicleType": "non-passenger",
+              "slabs": [
+                { "min": 0, "max": null, "rate": 3, "per": 100 }
+              ]
+            }
+          ]
+        },
+        {
+          "code": "VIC",
+          "name": "Victoria",
+          "vehicleFields": ["vehicleType", "registrationType"],
+          "rates": [
+            {
+              "dateFrom": "2024-07-01",
+              "vehicleType": "passenger",
+              "registrationType": "new",
+              "slabs": [
+                { "min": 0, "max": 69152, "rate": 6.4, "per": 200 },
+                { "min": 69152, "max": null, "rate": 10.4, "per": 200 }
+              ]
+            },
+            {
+              "dateFrom": "2024-07-01",
+              "vehicleType": "non-passenger",
+              "registrationType": "new",
+              "slabs": [
+                { "min": 0, "max": null, "rate": 5.4, "per": 200 }
+              ]
+            },
+            {
+              "dateFrom": "2024-07-01",
+              "vehicleType": "any",
+              "registrationType": "used",
+              "slabs": [
+                { "min": 0, "max": null, "rate": 8.4, "per": 200 }
+              ]
+            }
+          ]
+        },
+        {
+          "code": "QLD",
+          "name": "Queensland",
+          "vehicleFields": ["qldCategory"],
+          "rates": [
+            {
+              "dateFrom": "2024-07-01",
+              "qldCategory": "1-4cyl",
+              "slabs": [{ "min": 0, "max": null, "rate": 3, "per": 100 }]
+            },
+            {
+              "dateFrom": "2024-07-01",
+              "qldCategory": "5-6cyl",
+              "slabs": [{ "min": 0, "max": null, "rate": 3.5, "per": 100 }]
+            },
+            {
+              "dateFrom": "2024-07-01",
+              "qldCategory": "7+cyl",
+              "slabs": [{ "min": 0, "max": null, "rate": 4, "per": 100 }]
+            },
+            {
+              "dateFrom": "2024-07-01",
+              "qldCategory": "2rotor",
+              "slabs": [{ "min": 0, "max": null, "rate": 3, "per": 100 }]
+            },
+            {
+              "dateFrom": "2024-07-01",
+              "qldCategory": "3rotor",
+              "slabs": [{ "min": 0, "max": null, "rate": 3.5, "per": 100 }]
+            },
+            {
+              "dateFrom": "2024-07-01",
+              "qldCategory": "electric",
+              "slabs": [{ "min": 0, "max": null, "rate": 2, "per": 100 }]
+            },
+            {
+              "dateFrom": "2024-07-01",
+              "qldCategory": "hybrid",
+              "slabs": [{ "min": 0, "max": null, "rate": 2, "per": 100 }]
+            },
+            {
+              "dateFrom": "2024-07-01",
+              "qldCategory": "steam",
+              "slabs": [{ "min": 0, "max": null, "rate": 3, "per": 100 }]
+            },
+            {
+              "dateFrom": "2024-07-01",
+              "qldCategory": "special",
+              "slabs": [{ "min": 0, "max": null, "rate": 25, "per": 100 }]
+            }
+          ]
+        },
+        {
+          "code": "SA",
+          "name": "South Australia",
+          "vehicleFields": ["vehicleUse"],
+          "rates": [
+            {
+              "dateFrom": "2024-07-01",
+              "vehicleUse": "non-commercial",
+              "slabs": [
+                { "min": 0, "max": 1000, "rate": 1, "per": 100, "base": 5 },
+                { "min": 1000, "max": 2000, "rate": 2, "per": 100, "base": 10, "chargeFrom": 1000 },
+                { "min": 2000, "max": 3000, "rate": 3, "per": 100, "base": 30, "chargeFrom": 2000 },
+                { "min": 3000, "max": null, "rate": 4, "per": 100, "base": 60, "chargeFrom": 3000 }
+              ]
+            },
+            {
+              "dateFrom": "2024-07-01",
+              "vehicleUse": "commercial",
+              "slabs": [
+                { "min": 0, "max": 1000, "rate": 1, "per": 100, "base": 5 },
+                { "min": 1000, "max": 2000, "rate": 2, "per": 100, "base": 10, "chargeFrom": 1000 },
+                { "min": 2000, "max": null, "rate": 3, "per": 100, "base": 30, "chargeFrom": 2000 }
+              ]
+            }
+          ]
+        },
+        {
+          "code": "WA",
+          "name": "Western Australia",
+          "vehicleFields": ["vehicleWeight"],
+          "rates": [
+            {
+              "dateFrom": "2024-07-01",
+              "vehicleWeight": "light",
+              "slabs": [
+                { "min": 0, "max": 25000, "rate": 2.75, "per": 100 },
+                { "min": 25000, "max": 50000, "rate": 2.75, "per": 100, "graduated": true, "divisor": 6666.66, "chargeFrom": 25000 },
+                { "min": 50000, "max": null, "rate": 6.5, "per": 100 }
+              ]
+            },
+            {
+              "dateFrom": "2024-07-01",
+              "vehicleWeight": "heavy",
+              "slabs": [
+                { "min": 0, "max": 400000, "rate": 3, "per": 100 },
+                { "min": 400000, "max": null, "rate": 0, "per": 100, "base": 12000 }
+              ]
+            }
+          ]
+        },
+        {
+          "code": "ACT",
+          "name": "Australian Capital Territory",
+          "vehicleFields": ["vehicleType", "registrationType", "greenRating"],
+          "rates": [
+            {
+              "dateFrom": "2024-07-01",
+              "vehicleType": "passenger",
+              "registrationType": "new",
+              "greenRating": "A",
+              "slabs": [
+                { "min": 0, "max": null, "rate": 0, "per": 100 }
+              ]
+            },
+            {
+              "dateFrom": "2024-07-01",
+              "vehicleType": "passenger",
+              "registrationType": "new",
+              "greenRating": "B",
+              "slabs": [
+                { "min": 0, "max": 45000, "rate": 2, "per": 100 },
+                { "min": 45000, "max": null, "rate": 4, "per": 100, "base": 900, "chargeFrom": 45000 }
+              ]
+            },
+            {
+              "dateFrom": "2024-07-01",
+              "vehicleType": "passenger",
+              "registrationType": "new",
+              "greenRating": "C",
+              "slabs": [
+                { "min": 0, "max": 45000, "rate": 3, "per": 100 },
+                { "min": 45000, "max": null, "rate": 5, "per": 100, "base": 1350, "chargeFrom": 45000 }
+              ]
+            },
+            {
+              "dateFrom": "2024-07-01",
+              "vehicleType": "passenger",
+              "registrationType": "new",
+              "greenRating": "D",
+              "slabs": [
+                { "min": 0, "max": 45000, "rate": 4, "per": 100 },
+                { "min": 45000, "max": null, "rate": 6, "per": 100, "base": 1800, "chargeFrom": 45000 }
+              ]
+            },
+            {
+              "dateFrom": "2024-07-01",
+              "vehicleType": "non-passenger",
+              "registrationType": "new",
+              "slabs": [
+                { "min": 0, "max": null, "rate": 3, "per": 100 }
+              ]
+            },
+            {
+              "dateFrom": "2024-07-01",
+              "vehicleType": "any",
+              "registrationType": "used",
+              "slabs": [
+                { "min": 0, "max": null, "rate": 3, "per": 100 }
+              ]
+            }
+          ]
+        },
+        {
+          "code": "TAS",
+          "name": "Tasmania",
+          "vehicleFields": [],
+          "rates": [
+            {
+              "dateFrom": "2024-07-01",
+              "slabs": [
+                { "min": 0, "max": 600, "rate": 0, "per": 100, "base": 20 },
+                { "min": 600, "max": 35000, "rate": 3, "per": 100 },
+                { "min": 35000, "max": 40000, "rate": 11, "per": 100, "base": 1050 },
+                { "min": 40000, "max": null, "rate": 4, "per": 100 }
+              ]
+            }
+          ]
+        },
+        {
+          "code": "NT",
+          "name": "Northern Territory",
+          "vehicleFields": [],
+          "rates": [
+            {
+              "dateFrom": "2024-07-01",
+              "slabs": [
+                { "min": 0, "max": null, "rate": 3, "per": 100 }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "NZ",
+      "name": "New Zealand",
+      "currency": "NZD",
+      "currencySymbol": "$",
+      "flag": "nz",
+      "states": [
+        {
+          "code": "NZ",
+          "name": "New Zealand",
+          "vehicleFields": ["fuelType"],
+          "description": "NZ charges registration & licensing fees plus ACC levy based on fuel type and vehicle risk rating. Stamp duty equivalent is calculated on the vehicle value.",
+          "rates": [
+            {
+              "dateFrom": "2024-07-01",
+              "fuelType": "petrol",
+              "slabs": [
+                { "min": 0, "max": null, "rate": 2.5, "per": 100 }
+              ],
+              "additionalFees": {
+                "accLevy": 390.78,
+                "registrationFee": 103.52,
+                "platesFee": 20.24
+              }
+            },
+            {
+              "dateFrom": "2024-07-01",
+              "fuelType": "diesel",
+              "slabs": [
+                { "min": 0, "max": null, "rate": 2.5, "per": 100 }
+              ],
+              "additionalFees": {
+                "accLevy": 390.78,
+                "registrationFee": 103.52,
+                "platesFee": 20.24,
+                "rucFee": 76.00
+              }
+            },
+            {
+              "dateFrom": "2024-07-01",
+              "fuelType": "electric",
+              "slabs": [
+                { "min": 0, "max": null, "rate": 2.5, "per": 100 }
+              ],
+              "additionalFees": {
+                "accLevy": 390.78,
+                "registrationFee": 103.52,
+                "platesFee": 20.24
+              }
+            },
+            {
+              "dateFrom": "2024-07-01",
+              "fuelType": "hybrid",
+              "slabs": [
+                { "min": 0, "max": null, "rate": 2.5, "per": 100 }
+              ],
+              "additionalFees": {
+                "accLevy": 390.78,
+                "registrationFee": 103.52,
+                "platesFee": 20.24
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "fieldDefinitions": {
+    "vehicleType": {
+      "label": "Vehicle Type",
+      "type": "choice",
+      "options": [
+        { "value": "passenger", "label": "Passenger Vehicle" },
+        { "value": "non-passenger", "label": "Non-Passenger Vehicle" }
+      ]
+    },
+    "registrationType": {
+      "label": "Registration Type",
+      "type": "choice",
+      "options": [
+        { "value": "new", "label": "New Vehicle" },
+        { "value": "used", "label": "Used / Transfer" }
+      ]
+    },
+    "vehicleUse": {
+      "label": "Vehicle Use",
+      "type": "choice",
+      "options": [
+        { "value": "commercial", "label": "Commercial" },
+        { "value": "non-commercial", "label": "Non-Commercial" }
+      ]
+    },
+    "vehicleWeight": {
+      "label": "Vehicle Weight",
+      "type": "choice",
+      "options": [
+        { "value": "light", "label": "Light Vehicle (< 4.5t)" },
+        { "value": "heavy", "label": "Heavy Vehicle (>= 4.5t)" }
+      ]
+    },
+    "qldCategory": {
+      "label": "Engine Type",
+      "type": "choice",
+      "options": [
+        { "value": "1-4cyl", "label": "1 to 4 Cylinders" },
+        { "value": "5-6cyl", "label": "5 to 6 Cylinders" },
+        { "value": "7+cyl", "label": "7+ Cylinders" },
+        { "value": "2rotor", "label": "2 Rotor" },
+        { "value": "3rotor", "label": "3 Rotor" },
+        { "value": "electric", "label": "Electric" },
+        { "value": "hybrid", "label": "Hybrid" },
+        { "value": "steam", "label": "Steam" },
+        { "value": "special", "label": "Special Purpose" }
+      ]
+    },
+    "greenRating": {
+      "label": "Green Rating",
+      "type": "choice",
+      "showWhen": { "vehicleType": "passenger", "registrationType": "new" },
+      "options": [
+        { "value": "A", "label": "A - 5+ Stars (Exempt)" },
+        { "value": "B", "label": "B - 4 to 4.5 Stars" },
+        { "value": "C", "label": "C - 3 to 3.5 Stars" },
+        { "value": "D", "label": "D - 1 to 2.5 Stars" }
+      ]
+    },
+    "fuelType": {
+      "label": "Fuel Type",
+      "type": "choice",
+      "options": [
+        { "value": "petrol", "label": "Petrol" },
+        { "value": "diesel", "label": "Diesel" },
+        { "value": "electric", "label": "Electric" },
+        { "value": "hybrid", "label": "Hybrid" }
+      ]
+    }
+  }
+}
