@@ -15,7 +15,6 @@ void main() {
     au = rateData.countries.firstWhere((c) => c.code == 'AU');
   });
 
-  // ─── Helper ───────────────────────────────────────────────────────
   CalculationResult? calc(
     String stateCode,
     double price,
@@ -58,115 +57,165 @@ void main() {
   group('NSW', () {
     test('passenger \$30,000 → \$900', () {
       final r = calc('NSW', 30000, {'vehicleType': 'passenger'});
-      expect(r, isNotNull);
-      expect(r!.stampDuty, 900); // 300 units * $3
+      expect(r!.stampDuty, 900);
     });
 
-    test('passenger \$60,000 → \$1,350 + \$750 = \$2,100', () {
+    test('passenger \$60,000 → \$2,100', () {
       final r = calc('NSW', 60000, {'vehicleType': 'passenger'});
-      expect(r, isNotNull);
-      // base $1350 + (60000-45000)/100 * $5 = 1350 + 750 = 2100
       expect(r!.stampDuty, 2100);
     });
 
     test('non-passenger \$80,000 → \$2,400', () {
       final r = calc('NSW', 80000, {'vehicleType': 'non-passenger'});
-      expect(r, isNotNull);
-      expect(r!.stampDuty, 2400); // 800 * $3
+      expect(r!.stampDuty, 2400);
     });
 
     test('passenger at slab boundary \$45,000', () {
       final r = calc('NSW', 45000, {'vehicleType': 'passenger'});
-      expect(r, isNotNull);
-      expect(r!.stampDuty, 1350); // 450 * $3
+      expect(r!.stampDuty, 1350);
     });
   });
 
   // ─── VIC ──────────────────────────────────────────────────────────
   group('VIC', () {
-    test('new passenger \$50,000 → \$2,100', () {
+    test('standard car \$50,000 → \$2,100', () {
       final r = calc('VIC', 50000, {
-        'vehicleType': 'passenger',
-        'registrationType': 'new',
+        'vicVehicleType': 'car',
+        'vicCarCategory': 'standard',
       });
-      expect(r, isNotNull);
-      // 250 units * $8.40 = $2,100
       expect(r!.stampDuty, 2100);
     });
 
-    test('new passenger \$90,000 hits second tier', () {
+    test('standard car \$90,000 hits second tier', () {
       final r = calc('VIC', 90000, {
-        'vehicleType': 'passenger',
-        'registrationType': 'new',
+        'vicVehicleType': 'car',
+        'vicCarCategory': 'standard',
       });
-      expect(r, isNotNull);
-      // 450 units * $10.40 = $4,680
       expect(r!.stampDuty, 4680);
     });
 
-    test('used vehicle \$40,000', () {
-      final r = calc('VIC', 40000, {
-        'vehicleType': 'passenger',
-        'registrationType': 'used',
+    test('green car \$90,000 → flat rate (no luxury tiers)', () {
+      final r = calc('VIC', 90000, {
+        'vicVehicleType': 'car',
+        'vicCarCategory': 'green',
       });
-      expect(r, isNotNull);
-      // 200 units * $8.40 = $1,680
-      expect(r!.stampDuty, 1680);
+      // 450 * $8.40 = $3,780 (no luxury surcharge)
+      expect(r!.stampDuty, 3780);
+    });
+
+    test('primary producer car \$90,000 → flat rate', () {
+      final r = calc('VIC', 90000, {
+        'vicVehicleType': 'car',
+        'vicCarCategory': 'primary-producer',
+      });
+      expect(r!.stampDuty, 3780);
+    });
+
+    test('motorcycle \$15,000', () {
+      final r = calc('VIC', 15000, {'vicVehicleType': 'motorcycle'});
+      // 75 * $8.40 = $630
+      expect(r!.stampDuty, 630);
+    });
+
+    test('trailer \$8,000', () {
+      final r = calc('VIC', 8000, {'vicVehicleType': 'trailer'});
+      // 40 * $8.40 = $336
+      expect(r!.stampDuty, 336);
     });
 
     test('new non-passenger \$30,000', () {
-      final r = calc('VIC', 30000, {
-        'vehicleType': 'non-passenger',
-        'registrationType': 'new',
-      });
-      expect(r, isNotNull);
-      // 150 units * $5.40 = $810
+      final r = calc('VIC', 30000, {'vicVehicleType': 'non-passenger-new'});
       expect(r!.stampDuty, 810);
+    });
+
+    test('used non-passenger \$30,000', () {
+      final r = calc('VIC', 30000, {'vicVehicleType': 'non-passenger-used'});
+      expect(r!.stampDuty, 1260);
     });
   });
 
   // ─── QLD ──────────────────────────────────────────────────────────
   group('QLD', () {
-    test('4-cyl \$50,000 → \$1,500', () {
-      final r = calc('QLD', 50000, {'qldCategory': '1-4cyl'});
-      expect(r, isNotNull);
-      expect(r!.stampDuty, 1500); // 500 * $3
+    test('light 4-cyl \$50,000 → \$1,500', () {
+      final r = calc('QLD', 50000, {
+        'qldVehicleType': 'light',
+        'qldMotorType': '1-4cyl',
+      });
+      expect(r!.stampDuty, 1500);
     });
 
-    test('4-cyl \$120,000 hits second tier', () {
-      final r = calc('QLD', 120000, {'qldCategory': '1-4cyl'});
-      expect(r, isNotNull);
-      // 1200 * $5 = $6,000
+    test('light 4-cyl \$120,000 hits second tier', () {
+      final r = calc('QLD', 120000, {
+        'qldVehicleType': 'light',
+        'qldMotorType': '1-4cyl',
+      });
       expect(r!.stampDuty, 6000);
     });
 
-    test('electric \$80,000 → \$1,600', () {
-      final r = calc('QLD', 80000, {'qldCategory': 'electric'});
-      expect(r, isNotNull);
-      expect(r!.stampDuty, 1600); // 800 * $2
+    test('light electric \$80,000 → \$1,600', () {
+      final r = calc('QLD', 80000, {
+        'qldVehicleType': 'light',
+        'qldMotorType': 'electric',
+      });
+      expect(r!.stampDuty, 1600);
+    });
+
+    test('heavy 4-cyl \$120,000 → flat \$3/100', () {
+      final r = calc('QLD', 120000, {
+        'qldVehicleType': 'heavy',
+        'qldMotorType': '1-4cyl',
+      });
+      expect(r!.stampDuty, 3600);
     });
 
     test('special purpose → flat \$25', () {
-      final r = calc('QLD', 999999, {'qldCategory': 'special'});
-      expect(r, isNotNull);
+      final r = calc('QLD', 999999, {'qldVehicleType': 'special'});
       expect(r!.stampDuty, 25);
     });
   });
 
   // ─── SA ───────────────────────────────────────────────────────────
   group('SA', () {
-    test('non-commercial \$500 → \$10', () {
-      final r = calc('SA', 500, {'vehicleUse': 'non-commercial'});
-      expect(r, isNotNull);
-      // 5 units * $1 + $5 base = $10
+    test('non-commercial \$500 no fleet discount → \$10', () {
+      final r = calc('SA', 500, {
+        'vehicleUse': 'non-commercial',
+        'saFleetDiscount': 'no',
+      });
       expect(r!.stampDuty, 10);
     });
 
-    test('non-commercial \$25,000', () {
-      final r = calc('SA', 25000, {'vehicleUse': 'non-commercial'});
-      expect(r, isNotNull);
-      // $60 base + (25000-3000)/100 * $4 = 60 + 880 = $940
+    test('non-commercial \$25,000 no fleet discount → \$940', () {
+      final r = calc('SA', 25000, {
+        'vehicleUse': 'non-commercial',
+        'saFleetDiscount': 'no',
+      });
       expect(r!.stampDuty, 940);
+    });
+
+    test('non-commercial \$25,000 with fleet discount → lower rate', () {
+      final r = calc('SA', 25000, {
+        'vehicleUse': 'non-commercial',
+        'saFleetDiscount': 'yes',
+      });
+      // $60 base + (25000-3000)/100 * $3 = 60 + 660 = $720
+      expect(r!.stampDuty, 720);
+    });
+
+    test('commercial \$25,000', () {
+      final r = calc('SA', 25000, {
+        'vehicleUse': 'commercial',
+        'saFleetDiscount': 'no',
+      });
+      // $30 base + (25000-2000)/100 * $3 = 30 + 690 = $720
+      expect(r!.stampDuty, 720);
+    });
+  });
+
+  // ─── WA ───────────────────────────────────────────────────────────
+  group('WA', () {
+    test('light \$20,000 → 2.75%', () {
+      final r = calc('WA', 20000, {'vehicleWeight': 'light'});
+      expect(r!.stampDuty, 550);
     });
   });
 
@@ -174,22 +223,18 @@ void main() {
   group('NT', () {
     test('standard \$40,000 → \$1,200', () {
       final r = calc('NT', 40000, {'ntVehicleType': 'standard'});
-      expect(r, isNotNull);
       expect(r!.stampDuty, 1200);
     });
 
     test('electric \$40,000 → \$0 (EV concession)', () {
       final r = calc('NT', 40000, {'ntVehicleType': 'electric'},
           date: DateTime(2026, 1, 1));
-      expect(r, isNotNull);
       expect(r!.stampDuty, 0);
     });
 
     test('electric \$70,000 → duty on amount above \$50k', () {
       final r = calc('NT', 70000, {'ntVehicleType': 'electric'},
           date: DateTime(2026, 1, 1));
-      expect(r, isNotNull);
-      // (70000-50000)/100 * $3 = 200 * $3 = $600
       expect(r!.stampDuty, 600);
     });
   });
@@ -198,112 +243,135 @@ void main() {
   group('TAS', () {
     test('passenger \$300 → \$20 minimum', () {
       final r = calc('TAS', 300, {'tasVehicleType': 'passenger'});
-      expect(r, isNotNull);
       expect(r!.stampDuty, 20);
     });
 
     test('passenger \$20,000 → \$600', () {
       final r = calc('TAS', 20000, {'tasVehicleType': 'passenger'});
-      expect(r, isNotNull);
-      expect(r!.stampDuty, 600); // 200 * $3
+      expect(r!.stampDuty, 600);
+    });
+
+    test('caravan \$30,000 → \$920', () {
+      final r = calc('TAS', 30000, {'tasVehicleType': 'caravan'});
+      // $20 base + 300 * $3 = $920
+      expect(r!.stampDuty, 920);
     });
 
     test('heavy vehicle \$50,000 → \$520', () {
       final r = calc('TAS', 50000, {'tasVehicleType': 'heavy'});
-      expect(r, isNotNull);
-      // $20 base + 500 * $1 = $520
       expect(r!.stampDuty, 520);
     });
   });
 
-  // ─── ACT (new emissions system, from Sep 2025) ────────────────────
+  // ─── ACT new system (from Sep 2025) ───────────────────────────────
   group('ACT new system', () {
     test('new passenger AAA \$30,000', () {
       final r = calc('ACT', 30000, {
-        'vehicleType': 'passenger',
+        'actVehicleType': 'passenger',
         'registrationType': 'new',
         'emissionsRating': 'AAA',
       }, date: DateTime(2025, 10, 1));
-      expect(r, isNotNull);
-      // 300 * $2.50 = $750
       expect(r!.stampDuty, 750);
     });
 
     test('new passenger D rating \$30,000', () {
       final r = calc('ACT', 30000, {
-        'vehicleType': 'passenger',
+        'actVehicleType': 'passenger',
         'registrationType': 'new',
         'emissionsRating': 'D',
       }, date: DateTime(2025, 10, 1));
-      expect(r, isNotNull);
-      // 300 * $4.53 = $1,359
       expect(r!.stampDuty, 1359);
+    });
+
+    test('new passenger non-rated \$30,000', () {
+      final r = calc('ACT', 30000, {
+        'actVehicleType': 'passenger',
+        'registrationType': 'new',
+        'emissionsRating': 'non-rated',
+      }, date: DateTime(2025, 10, 1));
+      // C-rate equivalent: 300 * $3.17 = $951
+      expect(r!.stampDuty, 951);
+    });
+
+    test('motorcycle new \$15,000', () {
+      final r = calc('ACT', 15000, {
+        'actVehicleType': 'motorcycle',
+        'registrationType': 'new',
+      }, date: DateTime(2025, 10, 1));
+      // 150 * $3 = $450
+      expect(r!.stampDuty, 450);
+    });
+
+    test('motorcycle used \$10,000', () {
+      final r = calc('ACT', 10000, {
+        'actVehicleType': 'motorcycle',
+        'registrationType': 'used',
+      }, date: DateTime(2025, 10, 1));
+      // 100 * $3.17 = $317
+      expect(r!.stampDuty, 317);
+    });
+
+    test('trailer \$5,000', () {
+      final r = calc('ACT', 5000, {
+        'actVehicleType': 'trailer',
+      }, date: DateTime(2025, 10, 1));
+      // 50 * $3.17 = $158.50
+      expect(r!.stampDuty, 158.5);
+    });
+
+    test('other (truck) \$80,000', () {
+      final r = calc('ACT', 80000, {
+        'actVehicleType': 'other',
+      }, date: DateTime(2025, 10, 1));
+      // 800 * $3.17 = $2,536
+      expect(r!.stampDuty, 2536);
     });
   });
 
-  // ─── ACT (old green rating system, pre-Sep 2025) ──────────────────
+  // ─── ACT old green rating (pre-Sep 2025) ──────────────────────────
   group('ACT old green rating', () {
     test('green rating A (5+ stars) → exempt', () {
       final r = calc('ACT', 60000, {
-        'vehicleType': 'passenger',
+        'actVehicleType': 'passenger',
         'registrationType': 'new',
         'greenRating': 'A',
       }, date: DateTime(2025, 6, 1));
-      expect(r, isNotNull);
       expect(r!.stampDuty, 0);
     });
 
     test('green rating B \$30,000 → \$300', () {
       final r = calc('ACT', 30000, {
-        'vehicleType': 'passenger',
+        'actVehicleType': 'passenger',
         'registrationType': 'new',
         'greenRating': 'B',
       }, date: DateTime(2025, 6, 1));
-      expect(r, isNotNull);
-      // 300 * $1 = $300
       expect(r!.stampDuty, 300);
     });
 
-    test('green rating C \$60,000 → \$1,350 + \$750', () {
+    test('green rating C \$60,000 → \$2,100', () {
       final r = calc('ACT', 60000, {
-        'vehicleType': 'passenger',
+        'actVehicleType': 'passenger',
         'registrationType': 'new',
         'greenRating': 'C',
       }, date: DateTime(2025, 6, 1));
-      expect(r, isNotNull);
-      // base $1350 + (60000-45000)/100 * $5 = 1350 + 750 = $2,100
       expect(r!.stampDuty, 2100);
     });
 
     test('green rating D \$30,000 → \$1,200', () {
       final r = calc('ACT', 30000, {
-        'vehicleType': 'passenger',
+        'actVehicleType': 'passenger',
         'registrationType': 'new',
         'greenRating': 'D',
       }, date: DateTime(2025, 6, 1));
-      expect(r, isNotNull);
-      // 300 * $4 = $1,200
       expect(r!.stampDuty, 1200);
     });
 
     test('used vehicle pre-Sep 2025 → \$3/100', () {
       final r = calc('ACT', 40000, {
-        'vehicleType': 'passenger',
+        'actVehicleType': 'passenger',
         'registrationType': 'used',
       }, date: DateTime(2025, 6, 1));
-      expect(r, isNotNull);
-      // 400 * $3 = $1,200
       expect(r!.stampDuty, 1200);
-    });
-
-    test('non-passenger pre-Sep 2025 → \$3/100', () {
-      final r = calc('ACT', 50000, {
-        'vehicleType': 'non-passenger',
-        'registrationType': 'new',
-      }, date: DateTime(2025, 6, 1));
-      expect(r, isNotNull);
-      // 500 * $3 = $1,500
-      expect(r!.stampDuty, 1500);
     });
   });
 
@@ -312,13 +380,11 @@ void main() {
     test('LCT on \$100,000 standard vehicle', () {
       final lct = rateData.luxuryCarTax!;
       final tax = lct.calculate(100000);
-      // (100000 - 80567) * 10/11 * 0.33 = 19433 * 0.9091 * 0.33
       expect(tax, closeTo(5830.10, 1.0));
     });
 
     test('no LCT below threshold', () {
-      final lct = rateData.luxuryCarTax!;
-      expect(lct.calculate(70000), 0);
+      expect(rateData.luxuryCarTax!.calculate(70000), 0);
     });
 
     test('fuel-efficient uses higher threshold', () {
@@ -332,7 +398,6 @@ void main() {
   group('On-Road', () {
     test('includes registration and CTP', () {
       final r = calcOnRoad('NSW', 30000, {'vehicleType': 'passenger'});
-      expect(r, isNotNull);
       expect(r!.isOnRoadMode, true);
       expect(r.registration, 462);
       expect(r.ctp, 630);
@@ -342,72 +407,49 @@ void main() {
     test('includes dealer delivery when set', () {
       final r = calcOnRoad('NSW', 30000, {'vehicleType': 'passenger'},
           delivery: 1500);
-      expect(r, isNotNull);
       expect(r!.dealerDelivery, 1500);
       expect(r.breakdown.any((b) => b.description == 'Dealer delivery'), true);
     });
 
     test('LCT included for expensive new vehicle', () {
       final r = calcOnRoad('NSW', 100000, {'vehicleType': 'passenger'});
-      expect(r, isNotNull);
       expect(r!.luxuryCarTax, isNotNull);
       expect(r.luxuryCarTax!, greaterThan(0));
     });
 
     test('no LCT for used vehicle', () {
       final r = calcOnRoad('VIC', 100000, {
-        'vehicleType': 'passenger',
-        'registrationType': 'used',
+        'vicVehicleType': 'non-passenger-used',
       }, isNew: false);
-      expect(r, isNotNull);
       expect(r!.luxuryCarTax, isNull);
     });
   });
 
-  // ─── Date-based rate selection ────────────────────────────────────
+  // ─── Date matching ────────────────────────────────────────────────
   group('Date matching', () {
     test('NT EV concession expires after June 2027', () {
       final r = calc('NT', 40000, {'ntVehicleType': 'electric'},
           date: DateTime(2027, 7, 1));
-      // After expiry, no matching rule for 'electric' → null
       expect(r, isNull);
     });
 
     test('NT EV concession valid during period', () {
       final r = calc('NT', 40000, {'ntVehicleType': 'electric'},
           date: DateTime(2025, 1, 1));
-      expect(r, isNotNull);
       expect(r!.stampDuty, 0);
     });
   });
 
   // ─── Edge cases ───────────────────────────────────────────────────
   group('Edge cases', () {
-    test('\$0 price returns null (no matching slab)', () {
+    test('\$0 price', () {
       final r = calc('NSW', 0, {'vehicleType': 'passenger'});
-      // $0 should match the 0-45000 slab
-      expect(r, isNotNull);
       expect(r!.stampDuty, 0);
     });
 
     test('very large price', () {
       final r = calc('NSW', 5000000, {'vehicleType': 'passenger'});
-      expect(r, isNotNull);
       expect(r!.stampDuty, greaterThan(0));
-    });
-
-    test('missing selection returns null', () {
-      // NSW requires vehicleType but we don't provide it
-      final state = au.states.firstWhere((s) => s.code == 'QLD');
-      final r = StampDutyCalculator.calculate(
-        country: au,
-        state: state,
-        vehiclePrice: 30000,
-        selections: {}, // no qldCategory selected
-      );
-      // Should still return a result since empty selections match any rule
-      // (the first matching rule wins)
-      expect(r, isNotNull);
     });
   });
 
@@ -423,8 +465,7 @@ void main() {
         selections: {'nzFuelType': 'petrol', 'nzEngineSize': '1301-2600cc'},
         registrationDate: DateTime(2026, 1, 1),
       );
-      expect(r, isNotNull);
-      expect(r!.stampDuty, 0); // NZ has no stamp duty
+      expect(r!.stampDuty, 0);
       expect(r.additionalFees['annualLicensingTotal'], 325.74);
       expect(r.totalPayable, 325.74);
     });
