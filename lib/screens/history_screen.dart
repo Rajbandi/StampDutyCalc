@@ -240,7 +240,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Your past stamp duty, on-road, and other calculations will appear here for quick access.',
+              'Your past stamp duty, drive away, and other calculations will appear here for quick access.',
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
@@ -383,7 +383,7 @@ class _HistoryCard extends StatelessWidget {
                       ),
                       if (entry.isOnRoad)
                         Text(
-                          'On-road',
+                          'Drive Away',
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant,
                           ),

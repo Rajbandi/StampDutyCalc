@@ -631,7 +631,7 @@ class _SellerFeaturedCard extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'Calculate what your buyer pays in stamp duty + on-road costs',
+                          'Calculate what your buyer pays — drive away price including stamp duty',
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onTertiaryContainer
                                 .withValues(alpha: 0.85),
@@ -647,7 +647,7 @@ class _SellerFeaturedCard extends StatelessWidget {
                 spacing: 8,
                 children: [
                   _SellerHint(
-                    text: 'On-Road Cost',
+                    text: 'Drive Away',
                     icon: Icons.directions_car,
                     theme: theme,
                   ),

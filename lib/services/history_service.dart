@@ -118,7 +118,7 @@ class HistoryService {
         'Date,Country,State,Vehicle Price,Stamp Duty,Total,Mode,Note');
     for (final e in entries) {
       final note = (e.note ?? '').replaceAll(',', ';').replaceAll('\n', ' ');
-      final mode = e.isOnRoad ? 'On-Road' : 'Stamp Duty';
+      final mode = e.isOnRoad ? 'Drive Away' : 'Stamp Duty';
       buffer.writeln(
           '${e.timestamp.toIso8601String()},${e.countryName},${e.stateCode},${e.vehiclePrice},${e.stampDuty},${e.totalPayable},$mode,"$note"');
     }

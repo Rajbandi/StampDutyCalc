@@ -166,7 +166,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                   const SizedBox(height: 28),
                   _SectionHeader(
                     step: country.states.length > 1 ? 3 : 2,
-                    title: 'On-Road Options',
+                    title: 'Drive Away Options',
                     isCompleted: true,
                   ),
                   const SizedBox(height: 12),
@@ -193,7 +193,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                   icon: const Icon(Icons.calculate),
                   label: Text(provider.mode == CalculatorMode.stampDuty
                       ? 'Calculate Stamp Duty'
-                      : 'Calculate On-Road Cost'),
+                      : 'Calculate Drive Away Price'),
                 ),
                 if (!provider.canCalculate) ...[
                   const SizedBox(height: 8),

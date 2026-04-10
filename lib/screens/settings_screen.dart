@@ -350,7 +350,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _shareApp() async {
     await Share.share(
       'Check out Vehicle Calculator - Australian & NZ vehicle stamp duty, '
-      'on-road costs, fuel, and more in one app.\n\n'
+      'drive away price, fuel cost, and more in one app.\n\n'
       'https://github.com/oriclabs/StampDutyCalc',
       subject: 'Vehicle Calculator',
     );

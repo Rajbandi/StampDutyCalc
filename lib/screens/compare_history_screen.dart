@@ -136,8 +136,8 @@ class CompareHistoryScreen extends StatelessWidget {
                     ),
                     _CompareRow(
                       label: 'Mode',
-                      left: left.isOnRoad ? 'On-Road' : 'Stamp Duty',
-                      right: right.isOnRoad ? 'On-Road' : 'Stamp Duty',
+                      left: left.isOnRoad ? 'Drive Away' : 'Stamp Duty',
+                      right: right.isOnRoad ? 'Drive Away' : 'Stamp Duty',
                     ),
                     const Divider(height: 24),
                     _CompareRow(

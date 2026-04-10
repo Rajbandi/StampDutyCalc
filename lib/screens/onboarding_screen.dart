@@ -75,7 +75,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          'Stamp duty, on-road costs, finance, and more for Australia & New Zealand. Free, accurate, always up to date.',
+                          'Stamp duty, drive away price, finance, and more for Australia & New Zealand. Free, accurate, always up to date.',
                           textAlign: TextAlign.center,
                           style: theme.textTheme.bodyLarge?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant,

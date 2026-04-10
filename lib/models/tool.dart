@@ -55,7 +55,7 @@ class Tools {
 
   static const onRoad = Tool(
     id: 'on_road',
-    name: 'On-Road Cost',
+    name: 'Drive Away',
     description: 'Total drive-away price',
     icon: Icons.directions_car,
     category: ToolCategory.buying,
