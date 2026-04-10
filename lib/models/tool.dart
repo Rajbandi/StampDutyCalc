@@ -113,6 +113,7 @@ class Tools {
     description: 'Get free quotes',
     icon: Icons.shield,
     category: ToolCategory.ownership,
+    needsCountry: true,
   );
 
   static const evVsIce = Tool(
