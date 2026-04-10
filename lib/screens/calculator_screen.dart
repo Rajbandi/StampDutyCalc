@@ -329,10 +329,11 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         CurrencyInputFormatter(),
       ],
       decoration: InputDecoration(
-        labelText: 'Vehicle Price / Dutiable Value',
+        labelText: 'Vehicle Price',
         prefixText: '${country.currencySymbol} ',
         hintText: 'Enter amount',
-        helperText: 'Enter the purchase price or market value (whichever is higher)',
+        helperText: 'Purchase price or market value (whichever is higher)',
+        helperMaxLines: 2,
         helperStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
           color: Theme.of(context).colorScheme.onSurfaceVariant,
           fontStyle: FontStyle.italic,
@@ -370,6 +371,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         prefixText: '${country.currencySymbol} ',
         hintText: '0',
         helperText: 'Optional - leave empty if not applicable',
+        helperMaxLines: 2,
         helperStyle: theme.textTheme.bodySmall?.copyWith(
           color: theme.colorScheme.onSurfaceVariant,
           fontStyle: FontStyle.italic,

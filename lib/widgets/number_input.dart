@@ -40,6 +40,7 @@ class NumberInput extends StatelessWidget {
         prefixText: prefix,
         suffixText: suffix,
         helperText: helperText,
+        helperMaxLines: 2,
       ),
       onChanged: (value) {
         if (onChanged == null) return;
