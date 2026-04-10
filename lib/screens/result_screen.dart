@@ -9,7 +9,6 @@ import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import '../providers/calculator_provider.dart';
 import '../models/calculation_result.dart';
-import 'app_shell.dart';
 
 class ResultScreen extends StatefulWidget {
   const ResultScreen({super.key});
@@ -128,12 +127,10 @@ class _ResultScreenState extends State<ResultScreen> {
                 Expanded(
                   child: FilledButton.icon(
                     onPressed: () {
-                      provider.resetAll();
-                      Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                            builder: (_) => const AppShell()),
-                        (_) => false,
-                      );
+                      // Reset only the form state, keep country selected
+                      provider.reset();
+                      // Pop back to AppShell (root)
+                      Navigator.of(context).popUntil((r) => r.isFirst);
                     },
                     icon: const Icon(Icons.add),
                     label: const Text('New'),
