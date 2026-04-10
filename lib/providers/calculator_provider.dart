@@ -32,6 +32,7 @@ class CalculatorProvider extends ChangeNotifier {
   bool _hasTradeIn = false;
   double _tradeInValue = 0;
   bool _hasAbn = false;
+  String _customerName = '';
 
   // Finance section (in result screen)
   bool _hasFinance = false;
@@ -61,6 +62,7 @@ class CalculatorProvider extends ChangeNotifier {
   bool get hasTradeIn => _hasTradeIn;
   double get tradeInValue => _tradeInValue;
   bool get hasAbn => _hasAbn;
+  String get customerName => _customerName;
   bool get hasFinance => _hasFinance;
   double get loanDeposit => _loanDeposit;
   double get loanRate => _loanRate;
@@ -257,6 +259,11 @@ class CalculatorProvider extends ChangeNotifier {
         .then((prefs) => prefs.setBool(_abnPrefKey, value));
   }
 
+  void setCustomerName(String name) {
+    _customerName = name;
+    notifyListeners();
+  }
+
   void setHasFinance(bool value) {
     _hasFinance = value;
     notifyListeners();
@@ -334,6 +341,8 @@ class CalculatorProvider extends ChangeNotifier {
     _registrationDate = DateTime.now();
     _dealerDelivery = 0;
     _isFuelEfficient = false;
+    _customerName = '';
+    _tradeInValue = 0;
     _result = null;
     notifyListeners();
   }

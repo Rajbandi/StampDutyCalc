@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import '../providers/calculator_provider.dart';
+import '../providers/user_mode_provider.dart';
 import '../models/calculation_result.dart';
 import '../services/finance_calculator.dart';
 import '../utils/currency_input_formatter.dart';
@@ -67,9 +68,17 @@ class _ResultScreenState extends State<ResultScreen> {
               key: _repaintKey,
               child: Container(
                 color: theme.colorScheme.surface,
+                padding: const EdgeInsets.all(8),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+            // Dealer branding header (only in dealer mode)
+            if (context.watch<UserModeProvider>().mode == UserMode.dealer)
+              _DealerBrandingHeader(
+                businessName:
+                    context.watch<UserModeProvider>().businessName,
+                customerName: provider.customerName,
+              ),
             // Main result card
             _ResultHeroCard(result: result, formatter: formatter),
 
@@ -847,6 +856,52 @@ class _FinanceSlider extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _DealerBrandingHeader extends StatelessWidget {
+  final String businessName;
+  final String customerName;
+
+  const _DealerBrandingHeader({
+    required this.businessName,
+    required this.customerName,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    if (businessName.isEmpty && customerName.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (businessName.isNotEmpty)
+            Text(
+              businessName,
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w700,
+                color: theme.colorScheme.primary,
+              ),
+            ),
+          if (customerName.isNotEmpty) ...[
+            const SizedBox(height: 4),
+            Text(
+              'Quote for: $customerName',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+          const SizedBox(height: 8),
+          const Divider(height: 1),
+        ],
+      ),
     );
   }
 }

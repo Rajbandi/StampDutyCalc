@@ -6,6 +6,7 @@ import '../providers/calculator_provider.dart';
 import '../models/rate_models.dart';
 import '../utils/currency_input_formatter.dart';
 import '../services/bookmark_service.dart';
+import '../providers/user_mode_provider.dart';
 import '../utils/page_route.dart';
 import 'result_screen.dart';
 
@@ -133,6 +134,12 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                   isCompleted: provider.canCalculate,
                 ),
                 const SizedBox(height: 12),
+                // Customer name (dealer mode only)
+                if (context.watch<UserModeProvider>().mode ==
+                    UserMode.dealer) ...[
+                  _buildCustomerNameField(context, provider),
+                  const SizedBox(height: 12),
+                ],
                 _buildDatePicker(context, provider),
                 const SizedBox(height: 16),
                 ..._buildDynamicFields(context, provider),
@@ -460,6 +467,18 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildCustomerNameField(
+      BuildContext context, CalculatorProvider provider) {
+    return TextField(
+      decoration: const InputDecoration(
+        labelText: 'Customer Name (optional)',
+        prefixIcon: Icon(Icons.person_outline),
+        hintText: 'Shown on shared quotes',
+      ),
+      onChanged: (v) => provider.setCustomerName(v),
     );
   }
 
