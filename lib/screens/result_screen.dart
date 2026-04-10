@@ -9,7 +9,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import '../providers/calculator_provider.dart';
 import '../models/calculation_result.dart';
-import 'home_screen.dart';
+import 'app_shell.dart';
 
 class ResultScreen extends StatefulWidget {
   const ResultScreen({super.key});
@@ -131,7 +131,7 @@ class _ResultScreenState extends State<ResultScreen> {
                       provider.resetAll();
                       Navigator.of(context).pushAndRemoveUntil(
                         MaterialPageRoute(
-                            builder: (_) => const HomeScreen()),
+                            builder: (_) => const AppShell()),
                         (_) => false,
                       );
                     },

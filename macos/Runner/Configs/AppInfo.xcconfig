@@ -8,7 +8,7 @@
 PRODUCT_NAME = Vehicle Stamp Duty
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.bixaps.stampDutyCalc
+PRODUCT_BUNDLE_IDENTIFIER = com.oriclabs.stampDutyCalc
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = Copyright © 2026 com.bixaps. All rights reserved.
+PRODUCT_COPYRIGHT = Copyright © 2026 com.oriclabs. All rights reserved.

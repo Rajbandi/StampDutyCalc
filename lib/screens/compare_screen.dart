@@ -63,8 +63,14 @@ class _CompareScreenState extends State<CompareScreen> {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<CalculatorProvider>();
-    final country = provider.selectedCountry;
-    if (country == null) return const SizedBox.shrink();
+    // Default to first country (AU) if none selected
+    final country = provider.selectedCountry ??
+        (provider.countries.isNotEmpty ? provider.countries.first : null);
+    if (country == null) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
 
     final theme = Theme.of(context);
     final formatter = NumberFormat.currency(

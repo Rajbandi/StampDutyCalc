@@ -7,9 +7,6 @@ import '../utils/country_flags.dart';
 import '../utils/page_route.dart';
 import '../services/bookmark_service.dart';
 import 'calculator_screen.dart';
-import 'compare_screen.dart';
-import 'history_screen.dart';
-import 'settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -68,20 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                      actions: [
-                        IconButton(
-                          icon: const Icon(Icons.history),
-                          tooltip: 'Calculation history',
-                          onPressed: () => Navigator.push(
-                              context, slideUpRoute(const HistoryScreen())),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.settings_outlined),
-                          tooltip: 'Settings',
-                          onPressed: () => Navigator.push(context,
-                              slideUpRoute(const SettingsScreen())),
-                        ),
-                      ],
+                      actions: const [],
                     ),
                     SliverPadding(
                       padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
@@ -177,13 +161,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                     _loadBookmarks();
                                   });
                             },
-                            onCompare: country.states.length > 1
-                                ? () {
-                                    provider.selectCountry(country);
-                                    Navigator.push(context,
-                                        slideUpRoute(const CompareScreen()));
-                                  }
-                                : null,
                           );
                         },
                       ),
@@ -254,12 +231,10 @@ class _HomeScreenState extends State<HomeScreen> {
 class _CountryCard extends StatelessWidget {
   final Country country;
   final VoidCallback onTap;
-  final VoidCallback? onCompare;
 
   const _CountryCard({
     required this.country,
     required this.onTap,
-    this.onCompare,
   });
 
   @override
@@ -268,12 +243,11 @@ class _CountryCard extends StatelessWidget {
 
     return Card(
       clipBehavior: Clip.antiAlias,
-      child: Column(
-        children: [
-          InkWell(
-            onTap: onTap,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
               child: Row(
                 children: [
                   Text(
@@ -309,35 +283,8 @@ class _CountryCard extends StatelessWidget {
               ),
             ),
           ),
-          if (onCompare != null) ...[
-            const Divider(height: 1),
-            InkWell(
-              onTap: onCompare,
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.compare_arrows,
-                        size: 18, color: theme.colorScheme.primary),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Compare all states',
-                      style: theme.textTheme.labelLarge?.copyWith(
-                        color: theme.colorScheme.primary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
+        );
+      }
 }
 
 class _ModeSelector extends StatelessWidget {

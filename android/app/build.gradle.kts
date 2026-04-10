@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.bixaps.stamp_duty_calc"
+    namespace = "com.oriclabs.stamp_duty_calc"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -21,7 +21,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.bixaps.stamp_duty_calc"
+        applicationId = "com.oriclabs.stamp_duty_calc"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
