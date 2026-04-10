@@ -296,16 +296,21 @@ class _ToolCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    tool.name,
-                    textAlign: TextAlign.center,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      height: 1.2,
-                      fontSize: 12,
+                  // Fixed-height container reserves space for 2 lines so all
+                  // tiles have consistent vertical alignment
+                  SizedBox(
+                    height: 32, // 12px font * 1.2 line height * 2 lines
+                    child: Text(
+                      tool.name,
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        height: 1.2,
+                        fontSize: 12,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
