@@ -3,11 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../providers/calculator_provider.dart';
 import '../models/rate_models.dart';
+import '../models/tool.dart';
 import '../utils/country_flags.dart';
 import '../utils/page_route.dart';
-import '../services/bookmark_service.dart';
-import 'calculator_screen.dart';
-import 'compare_screen.dart';
+import '../services/favourites_service.dart';
+import 'tool_router.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,26 +17,30 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<Bookmark> _bookmarks = [];
+  Set<String> _favourites = {};
   bool _showCountryList = false;
 
   @override
   void initState() {
     super.initState();
-    _loadBookmarks();
+    _loadFavourites();
   }
 
-  Future<void> _loadBookmarks() async {
-    final bookmarks = await BookmarkService.getBookmarks();
-    if (mounted) setState(() => _bookmarks = bookmarks);
+  Future<void> _loadFavourites() async {
+    final favs = await FavouritesService.getFavourites();
+    if (mounted) setState(() => _favourites = favs);
   }
 
-  /// When a country is selected, exclude it from the "other countries" list
-  List<Country> _filteredCountries(CalculatorProvider provider) {
+  List<Country> _otherCountries(CalculatorProvider provider) {
     if (provider.selectedCountry == null) return provider.countries;
     return provider.countries
         .where((c) => c.code != provider.selectedCountry!.code)
         .toList();
+  }
+
+  void _openTool(Tool tool) {
+    Navigator.push(context, slideUpRoute(ToolRouter(tool: tool)))
+        .then((_) => _loadFavourites());
   }
 
   @override
@@ -44,419 +48,385 @@ class _HomeScreenState extends State<HomeScreen> {
     final provider = context.watch<CalculatorProvider>();
     final theme = Theme.of(context);
 
-    // Show rate update snackbar
-    if (provider.ratesUpdated) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        provider.clearRatesUpdated();
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text('Rates have been updated to the latest version'),
-              behavior: SnackBarBehavior.floating,
-              action: SnackBarAction(label: 'OK', onPressed: () {}),
-              duration: const Duration(seconds: 4),
+    if (provider.isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+    if (provider.error != null) {
+      return Scaffold(
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(32),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.error_outline,
+                    size: 64, color: theme.colorScheme.error),
+                const SizedBox(height: 16),
+                Text(provider.error!, textAlign: TextAlign.center),
+                const SizedBox(height: 24),
+                FilledButton.icon(
+                  onPressed: () => provider.init(),
+                  icon: const Icon(Icons.refresh),
+                  label: const Text('Retry'),
+                ),
+              ],
             ),
-          );
-        }
-      });
+          ),
+        ),
+      );
     }
 
+    final favouriteTools =
+        Tools.all.where((t) => _favourites.contains(t.id)).toList();
+
     return Scaffold(
-      body: provider.isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : provider.error != null
-              ? _buildError(context, provider)
-              : CustomScrollView(
-                  slivers: [
-                    SliverAppBar.large(
-                      title: Text(
-                        'Vehicle Stamp Duty Calculator',
-                        style: theme.textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      actions: const [],
-                    ),
-                    SliverPadding(
-                      padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
-                      sliver: SliverToBoxAdapter(
-                        child: _ModeSelector(provider: provider),
-                      ),
-                    ),
-                    // Quick launch for remembered country
-                    if (provider.selectedCountry != null)
-                      SliverPadding(
-                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
-                        sliver: SliverToBoxAdapter(
-                          child: Card(
-                            color: theme.colorScheme.primaryContainer,
-                            child: InkWell(
-                              onTap: () {
-                                Navigator.push(context,
-                                    slideUpRoute(const CalculatorScreen()))
-                                    .then((_) {
-                                      provider.reset();
-                                      _loadBookmarks();
-                                    });
-                              },
-                              borderRadius: BorderRadius.circular(16),
-                              child: Padding(
-                                padding: const EdgeInsets.all(16),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      countryFlag(provider.selectedCountry!.code),
-                                      style: const TextStyle(fontSize: 32),
-                                    ),
-                                    const SizedBox(width: 16),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            'Continue with ${provider.selectedCountry!.name}',
-                                            style: theme.textTheme.titleMedium?.copyWith(
-                                              fontWeight: FontWeight.w600,
-                                              color: theme.colorScheme.onPrimaryContainer,
-                                            ),
-                                          ),
-                                          Text(
-                                            'Tap to start calculating',
-                                            style: theme.textTheme.bodySmall?.copyWith(
-                                              color: theme.colorScheme.onPrimaryContainer
-                                                  .withValues(alpha: 0.7),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    IconButton(
-                                      icon: const Icon(Icons.close),
-                                      tooltip: 'Reset country selection',
-                                      color:
-                                          theme.colorScheme.onPrimaryContainer,
-                                      onPressed: () {
-                                        provider.resetAll();
-                                        setState(() =>
-                                            _showCountryList = false);
-                                      },
-                                    ),
-                                    Icon(Icons.arrow_forward,
-                                        color: theme.colorScheme.onPrimaryContainer),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-
-                    // Header text or "Choose another country" toggle
-                    if (provider.selectedCountry == null)
-                      SliverPadding(
-                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                        sliver: SliverToBoxAdapter(
-                          child: Text(
-                            provider.mode == CalculatorMode.stampDuty
-                                ? 'Select a country to calculate vehicle stamp duty'
-                                : 'Select a country to calculate total on-road costs',
-                            style: theme.textTheme.bodyLarge?.copyWith(
-                              color: theme.colorScheme.onSurfaceVariant,
-                            ),
-                          ),
-                        ),
-                      )
-                    else
-                      SliverPadding(
-                        padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
-                        sliver: SliverToBoxAdapter(
-                          child: TextButton.icon(
-                            onPressed: () {
-                              setState(() =>
-                                  _showCountryList = !_showCountryList);
-                            },
-                            icon: Icon(_showCountryList
-                                ? Icons.expand_less
-                                : Icons.expand_more),
-                            label: Text(_showCountryList
-                                ? 'Hide countries'
-                                : 'Choose another country'),
-                            style: TextButton.styleFrom(
-                              alignment: Alignment.centerLeft,
-                            ),
-                          ),
-                        ),
-                      ),
-                    // Bookmarks
-                    if (_bookmarks.isNotEmpty) ...[
-                      SliverPadding(
-                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
-                        sliver: SliverToBoxAdapter(
-                          child: Text(
-                            'Bookmarks',
-                            style: theme.textTheme.titleSmall?.copyWith(
-                              color: theme.colorScheme.primary,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ),
-                      SliverPadding(
-                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                        sliver: SliverToBoxAdapter(
-                          child: Wrap(
-                            spacing: 8,
-                            runSpacing: 8,
-                            children: _bookmarks.asMap().entries.map((entry) {
-                              final idx = entry.key;
-                              final bm = entry.value;
-                              return InputChip(
-                                avatar: const Icon(Icons.bookmark, size: 16),
-                                label: Text(bm.label),
-                                onPressed: () {
-                                  // Find country and state, apply selections
-                                  final country = provider.countries
-                                      .where((c) => c.code == bm.countryCode)
-                                      .firstOrNull;
-                                  if (country == null) return;
-                                  final state = country.states
-                                      .where((s) => s.code == bm.stateCode)
-                                      .firstOrNull;
-                                  if (state == null) return;
-
-                                  provider.selectCountry(country);
-                                  provider.selectState(state);
-                                  for (final sel in bm.selections.entries) {
-                                    provider.setSelection(sel.key, sel.value);
-                                  }
-                                  Navigator.push(context,
-                                      slideUpRoute(const CalculatorScreen()));
-                                },
-                                onDeleted: () async {
-                                  await BookmarkService.removeBookmark(idx);
-                                  _loadBookmarks();
-                                },
-                              );
-                            }).toList(),
-                          ),
-                        ),
-                      ),
-                    ],
-
-                    // Country list - show all if no country selected,
-                    // or only others when toggle is on
-                    if (provider.selectedCountry == null || _showCountryList)
-                    SliverPadding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      sliver: SliverList.separated(
-                        itemCount: _filteredCountries(provider).length,
-                        separatorBuilder: (_, _) =>
-                            const SizedBox(height: 12),
-                        itemBuilder: (context, index) {
-                          final country = _filteredCountries(provider)[index];
-                          return _CountryCard(
-                            country: country,
-                            onCompare: country.states.length > 1
-                                ? () {
-                                    provider.selectCountry(country);
-                                    Navigator.push(context,
-                                        slideUpRoute(const CompareScreen()));
-                                  }
-                                : null,
-                            onTap: () {
-                              provider.selectCountry(country);
-                              setState(() => _showCountryList = false);
-                              Navigator.push(context,
-                                  slideUpRoute(const CalculatorScreen()))
-                                  .then((_) {
-                                    provider.reset();
-                                    _loadBookmarks();
-                                  });
-                            },
-                          );
-                        },
-                      ),
-                    ),
-                    SliverPadding(
-                      padding: const EdgeInsets.all(20),
-                      sliver: SliverToBoxAdapter(
-                        child: _buildRateInfo(context, provider),
-                      ),
-                    ),
-                  ],
-                ),
-    );
-  }
-
-  Widget _buildError(BuildContext context, CalculatorProvider provider) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.error_outline,
-                size: 64,
-                color: Theme.of(context).colorScheme.error),
-            const SizedBox(height: 16),
-            Text(provider.error!,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyLarge),
-            const SizedBox(height: 24),
-            FilledButton.icon(
-              onPressed: () => provider.init(),
-              icon: const Icon(Icons.refresh),
-              label: const Text('Retry'),
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar.large(
+            title: Text(
+              'Vehicle Calculator',
+              style: theme.textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
             ),
-          ],
-        ),
-      ),
-    );
-  }
+          ),
 
-  Widget _buildRateInfo(BuildContext context, CalculatorProvider provider) {
-    final theme = Theme.of(context);
-    return Card(
-      color: theme.colorScheme.surfaceContainerLow,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            Icon(Icons.update, color: theme.colorScheme.primary, size: 20),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                'Rates version ${provider.rateData?.version ?? ''} - Last updated ${provider.rateData?.lastUpdated ?? ''}',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
+          // Country continue card
+          if (provider.selectedCountry != null)
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
+              sliver: SliverToBoxAdapter(
+                child: _CountryContinueCard(
+                  country: provider.selectedCountry!,
+                  onReset: () {
+                    provider.resetAll();
+                    setState(() => _showCountryList = false);
+                  },
+                ),
+              ),
+            ),
+
+          // Country selector / toggle
+          if (provider.selectedCountry == null)
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
+              sliver: SliverToBoxAdapter(
+                child: Text(
+                  'Select your country',
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            )
+          else
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+              sliver: SliverToBoxAdapter(
+                child: TextButton.icon(
+                  onPressed: () =>
+                      setState(() => _showCountryList = !_showCountryList),
+                  icon: Icon(_showCountryList
+                      ? Icons.expand_less
+                      : Icons.expand_more),
+                  label: Text(_showCountryList
+                      ? 'Hide countries'
+                      : 'Choose another country'),
+                  style: TextButton.styleFrom(
+                    alignment: Alignment.centerLeft,
+                  ),
+                ),
+              ),
+            ),
+
+          // Country list
+          if (provider.selectedCountry == null || _showCountryList)
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+              sliver: SliverList.separated(
+                itemCount: _otherCountries(provider).length,
+                separatorBuilder: (_, _) => const SizedBox(height: 8),
+                itemBuilder: (context, index) {
+                  final country = _otherCountries(provider)[index];
+                  return _CountryListItem(
+                    country: country,
+                    onTap: () {
+                      HapticFeedback.selectionClick();
+                      provider.selectCountry(country);
+                      setState(() => _showCountryList = false);
+                    },
+                  );
+                },
+              ),
+            ),
+
+          // Favourites
+          if (favouriteTools.isNotEmpty) ...[
+            _SectionHeader('★ Favourites'),
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+              sliver: SliverGrid(
+                gridDelegate:
+                    const SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 180,
+                  mainAxisSpacing: 12,
+                  crossAxisSpacing: 12,
+                  childAspectRatio: 1,
+                ),
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    final tool = favouriteTools[index];
+                    return _ToolCard(
+                      tool: tool,
+                      onTap: () => _openTool(tool),
+                      isFavourite: true,
+                    );
+                  },
+                  childCount: favouriteTools.length,
                 ),
               ),
             ),
           ],
-        ),
+
+          // Tools by category
+          ..._buildCategorySections(context, provider),
+
+          const SliverToBoxAdapter(child: SizedBox(height: 32)),
+        ],
       ),
     );
   }
 
+  List<Widget> _buildCategorySections(
+      BuildContext context, CalculatorProvider provider) {
+    final widgets = <Widget>[];
+    for (final cat in ToolCategory.values) {
+      final tools = Tools.byCategory(cat);
+      if (tools.isEmpty) continue;
+      widgets.add(_SectionHeader(cat.label));
+      widgets.add(SliverPadding(
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+        sliver: SliverGrid(
+          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+            maxCrossAxisExtent: 180,
+            mainAxisSpacing: 12,
+            crossAxisSpacing: 12,
+            childAspectRatio: 1,
+          ),
+          delegate: SliverChildBuilderDelegate(
+            (context, index) {
+              final tool = tools[index];
+              return _ToolCard(
+                tool: tool,
+                onTap: () => _openTool(tool),
+                isFavourite: _favourites.contains(tool.id),
+              );
+            },
+            childCount: tools.length,
+          ),
+        ),
+      ));
+    }
+    return widgets;
+  }
 }
 
-class _CountryCard extends StatelessWidget {
-  final Country country;
-  final VoidCallback onTap;
-  final VoidCallback? onCompare;
+class _SectionHeader extends StatelessWidget {
+  final String title;
+  const _SectionHeader(this.title);
 
-  const _CountryCard({
-    required this.country,
+  @override
+  Widget build(BuildContext context) {
+    return SliverPadding(
+      padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
+      sliver: SliverToBoxAdapter(
+        child: Text(
+          title.toUpperCase(),
+          style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.8,
+              ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ToolCard extends StatelessWidget {
+  final Tool tool;
+  final VoidCallback onTap;
+  final bool isFavourite;
+
+  const _ToolCard({
+    required this.tool,
     required this.onTap,
-    this.onCompare,
+    this.isFavourite = false,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return Card(
       clipBehavior: Clip.antiAlias,
-      child: Column(
-        children: [
-          InkWell(
-            onTap: onTap,
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(
-                  20, 20, 20, onCompare != null ? 12 : 20),
-              child: Row(
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
                 children: [
-                  Text(
-                    countryFlag(country.code),
-                    style: const TextStyle(fontSize: 40),
-                  ),
-                  const SizedBox(width: 20),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          country.name,
-                          style: theme.textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          '${country.states.length} ${country.states.length == 1 ? 'region' : 'states/territories'} - ${country.currency}',
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                      ],
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.primaryContainer,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(
+                      tool.icon,
+                      color: theme.colorScheme.onPrimaryContainer,
+                      size: 22,
                     ),
                   ),
-                  Icon(
-                    Icons.chevron_right,
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
+                  const Spacer(),
+                  if (isFavourite)
+                    const Icon(Icons.star, color: Colors.amber, size: 16),
                 ],
               ),
-            ),
-          ),
-          if (onCompare != null) ...[
-            const Divider(height: 1),
-            InkWell(
-              onTap: onCompare,
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.compare_arrows,
-                        size: 18, color: theme.colorScheme.primary),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Compare all states',
-                      style: theme.textTheme.labelLarge?.copyWith(
-                        color: theme.colorScheme.primary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
+              const Spacer(),
+              Text(
+                tool.name,
+                style: theme.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w700,
                 ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-            ),
-          ],
-        ],
+              const SizedBox(height: 2),
+              Text(
+                tool.description,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 }
 
-class _ModeSelector extends StatelessWidget {
-  final CalculatorProvider provider;
+class _CountryContinueCard extends StatelessWidget {
+  final Country country;
+  final VoidCallback onReset;
 
-  const _ModeSelector({required this.provider});
+  const _CountryContinueCard({
+    required this.country,
+    required this.onReset,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return SegmentedButton<CalculatorMode>(
-      segments: const [
-        ButtonSegment(
-          value: CalculatorMode.stampDuty,
-          label: Text('Stamp Duty'),
-          icon: Icon(Icons.receipt_long),
+    final theme = Theme.of(context);
+    return Card(
+      color: theme.colorScheme.primaryContainer,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 12, 8, 12),
+        child: Row(
+          children: [
+            Text(
+              countryFlag(country.code),
+              style: const TextStyle(fontSize: 28),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    country.name,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: theme.colorScheme.onPrimaryContainer,
+                    ),
+                  ),
+                  Text(
+                    'Country-specific tools will use these rates',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onPrimaryContainer
+                          .withValues(alpha: 0.7),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.close),
+              tooltip: 'Reset country',
+              color: theme.colorScheme.onPrimaryContainer,
+              onPressed: onReset,
+            ),
+          ],
         ),
-        ButtonSegment(
-          value: CalculatorMode.onRoad,
-          label: Text('On-Road Cost'),
-          icon: Icon(Icons.directions_car),
+      ),
+    );
+  }
+}
+
+class _CountryListItem extends StatelessWidget {
+  final Country country;
+  final VoidCallback onTap;
+
+  const _CountryListItem({required this.country, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            children: [
+              Text(
+                countryFlag(country.code),
+                style: const TextStyle(fontSize: 28),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      country.name,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text(
+                      '${country.states.length} ${country.states.length == 1 ? "region" : "states"} - ${country.currency}',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.chevron_right,
+                  color: theme.colorScheme.onSurfaceVariant),
+            ],
+          ),
         ),
-      ],
-      selected: {provider.mode},
-      onSelectionChanged: (selected) {
-        HapticFeedback.selectionClick();
-        provider.setMode(selected.first);
-      },
-      style: const ButtonStyle(
-        visualDensity: VisualDensity.comfortable,
       ),
     );
   }

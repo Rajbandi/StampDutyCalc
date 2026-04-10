@@ -22,7 +22,7 @@ class StampDutyApp extends StatelessWidget {
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, _) {
           return MaterialApp(
-            title: 'Vehicle Stamp Duty Calculator',
+            title: 'Vehicle Calculator',
             debugShowCheckedModeBanner: false,
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,

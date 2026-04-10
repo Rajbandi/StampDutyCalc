@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.oriclabs" "\0"
-            VALUE "FileDescription", "Vehicle Stamp Duty" "\0"
+            VALUE "FileDescription", "Vehicle Calculator" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "stamp_duty_calc" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2026 com.oriclabs. All rights reserved." "\0"
             VALUE "OriginalFilename", "stamp_duty_calc.exe" "\0"
-            VALUE "ProductName", "Vehicle Stamp Duty" "\0"
+            VALUE "ProductName", "Vehicle Calculator" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

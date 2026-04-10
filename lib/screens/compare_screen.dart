@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../providers/calculator_provider.dart';
@@ -139,6 +140,76 @@ class _CompareScreenState extends State<CompareScreen> {
                   ),
                 ),
                 const SizedBox(height: 12),
+
+                // Bar chart visualization
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: SizedBox(
+                      height: _results.length * 40.0 + 30,
+                      child: BarChart(
+                        BarChartData(
+                          alignment: BarChartAlignment.spaceAround,
+                          maxY: _results
+                                  .map((r) => r.stampDuty)
+                                  .reduce((a, b) => a > b ? a : b) *
+                              1.1,
+                          barTouchData: BarTouchData(enabled: false),
+                          titlesData: FlTitlesData(
+                            rightTitles: const AxisTitles(
+                              sideTitles: SideTitles(showTitles: false),
+                            ),
+                            topTitles: const AxisTitles(
+                              sideTitles: SideTitles(showTitles: false),
+                            ),
+                            leftTitles: const AxisTitles(
+                              sideTitles: SideTitles(showTitles: false),
+                            ),
+                            bottomTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                reservedSize: 24,
+                                getTitlesWidget: (v, _) {
+                                  final i = v.toInt();
+                                  if (i < 0 || i >= _results.length) {
+                                    return const SizedBox();
+                                  }
+                                  return Text(
+                                    _results[i].stateCode,
+                                    style: theme.textTheme.bodySmall,
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                          gridData: const FlGridData(show: false),
+                          borderData: FlBorderData(show: false),
+                          barGroups: _results.asMap().entries.map((e) {
+                            final isLowest = e.key == 0;
+                            return BarChartGroupData(
+                              x: e.key,
+                              barRods: [
+                                BarChartRodData(
+                                  toY: e.value.stampDuty,
+                                  color: isLowest
+                                      ? theme.colorScheme.primary
+                                      : theme.colorScheme.secondary
+                                          .withValues(alpha: 0.6),
+                                  width: 24,
+                                  borderRadius:
+                                      const BorderRadius.vertical(
+                                          top: Radius.circular(4)),
+                                ),
+                              ],
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+
                 ..._results.asMap().entries.map((entry) {
                   final idx = entry.key;
                   final r = entry.value;
