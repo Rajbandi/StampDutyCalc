@@ -77,6 +77,8 @@ class _ResultScreenState extends State<ResultScreen> {
               _DealerBrandingHeader(
                 businessName:
                     context.watch<UserModeProvider>().businessName,
+                salespersonName:
+                    context.watch<UserModeProvider>().salespersonName,
                 customerName: provider.customerName,
               ),
             // Main result card
@@ -237,12 +239,29 @@ class _ResultScreenState extends State<ResultScreen> {
 
   void _copyResult(
       BuildContext context, CalculationResult result, NumberFormat formatter) {
-    final text = StringBuffer()
+    final modeProvider = context.read<UserModeProvider>();
+    final calcProvider = context.read<CalculatorProvider>();
+    final isDealer = modeProvider.mode == UserMode.dealer;
+
+    final text = StringBuffer();
+    if (isDealer && modeProvider.businessName.isNotEmpty) {
+      text.writeln(modeProvider.businessName);
+    }
+    if (isDealer && modeProvider.salespersonName.isNotEmpty) {
+      text.writeln('Prepared by: ${modeProvider.salespersonName}');
+    }
+    if (isDealer && calcProvider.customerName.isNotEmpty) {
+      text.writeln('Quote for: ${calcProvider.customerName}');
+    }
+    if (isDealer) text.writeln('---');
+
+    text
       ..writeln(result.isOnRoadMode
           ? 'On-Road Cost Calculation'
           : 'Stamp Duty Calculation')
       ..writeln('${result.countryName} - ${result.stateName}')
-      ..writeln('Date: ${DateFormat('d MMM yyyy').format(result.registrationDate)}')
+      ..writeln(
+          'Date: ${DateFormat('d MMM yyyy').format(result.registrationDate)}')
       ..writeln('---');
 
     for (final item in result.breakdown) {
@@ -862,17 +881,21 @@ class _FinanceSlider extends StatelessWidget {
 
 class _DealerBrandingHeader extends StatelessWidget {
   final String businessName;
+  final String salespersonName;
   final String customerName;
 
   const _DealerBrandingHeader({
     required this.businessName,
+    required this.salespersonName,
     required this.customerName,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    if (businessName.isEmpty && customerName.isEmpty) {
+    if (businessName.isEmpty &&
+        salespersonName.isEmpty &&
+        customerName.isEmpty) {
       return const SizedBox.shrink();
     }
 
@@ -889,12 +912,22 @@ class _DealerBrandingHeader extends StatelessWidget {
                 color: theme.colorScheme.primary,
               ),
             ),
+          if (salespersonName.isNotEmpty) ...[
+            const SizedBox(height: 2),
+            Text(
+              'Prepared by: $salespersonName',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
           if (customerName.isNotEmpty) ...[
             const SizedBox(height: 4),
             Text(
               'Quote for: $customerName',
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
+                color: theme.colorScheme.onSurface,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ],

@@ -37,12 +37,15 @@ enum UserMode {
 class UserModeProvider extends ChangeNotifier {
   static const _modeKey = 'user_mode';
   static const _businessNameKey = 'business_name';
+  static const _salespersonKey = 'salesperson_name';
 
   UserMode _mode = UserMode.simple;
   String _businessName = '';
+  String _salespersonName = '';
 
   UserMode get mode => _mode;
   String get businessName => _businessName;
+  String get salespersonName => _salespersonName;
 
   // Visibility flags driven by mode
   bool get showSearchBar => _mode == UserMode.dealer;
@@ -63,6 +66,7 @@ class UserModeProvider extends ChangeNotifier {
       );
     }
     _businessName = prefs.getString(_businessNameKey) ?? '';
+    _salespersonName = prefs.getString(_salespersonKey) ?? '';
     notifyListeners();
   }
 
@@ -78,5 +82,12 @@ class UserModeProvider extends ChangeNotifier {
     notifyListeners();
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_businessNameKey, name);
+  }
+
+  Future<void> setSalespersonName(String name) async {
+    _salespersonName = name;
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_salespersonKey, name);
   }
 }

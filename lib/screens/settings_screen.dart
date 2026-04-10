@@ -65,6 +65,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onChanged: (v) => modeProvider.setBusinessName(v),
               ),
             ),
+            const SizedBox(height: 12),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: TextField(
+                controller: TextEditingController(
+                    text: modeProvider.salespersonName),
+                decoration: const InputDecoration(
+                  labelText: 'Your Name (Salesperson)',
+                  hintText: 'Optional - shown as "Prepared by"',
+                  prefixIcon: Icon(Icons.person_outline),
+                ),
+                onSubmitted: (v) => modeProvider.setSalespersonName(v),
+                onChanged: (v) => modeProvider.setSalespersonName(v),
+              ),
+            ),
           ],
           const SizedBox(height: 16),
 
