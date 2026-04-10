@@ -172,7 +172,10 @@ class _HomeScreenState extends State<HomeScreen> {
                               provider.selectCountry(country);
                               Navigator.push(context,
                                   slideUpRoute(const CalculatorScreen()))
-                                  .then((_) => _loadBookmarks());
+                                  .then((_) {
+                                    provider.reset();
+                                    _loadBookmarks();
+                                  });
                             },
                             onCompare: country.states.length > 1
                                 ? () {

@@ -127,10 +127,8 @@ class _ResultScreenState extends State<ResultScreen> {
                 Expanded(
                   child: FilledButton.icon(
                     onPressed: () {
-                      Navigator.popUntil(context, (route) => route.isFirst);
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        provider.resetAll();
-                      });
+                      // Pop back to home, pass signal to reset
+                      Navigator.of(context).popUntil((route) => route.isFirst);
                     },
                     icon: const Icon(Icons.add),
                     label: const Text('New'),
