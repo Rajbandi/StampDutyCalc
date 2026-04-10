@@ -5,6 +5,7 @@ class RateData {
   final Map<String, FieldDefinition> fieldDefinitions;
   final LuxuryCarTax? luxuryCarTax;
   final List<InsuranceProvider> insuranceProviders;
+  final String? insuranceDisclaimer;
 
   RateData({
     required this.version,
@@ -13,6 +14,7 @@ class RateData {
     required this.fieldDefinitions,
     this.luxuryCarTax,
     this.insuranceProviders = const [],
+    this.insuranceDisclaimer,
   });
 
   factory RateData.fromJson(Map<String, dynamic> json) {
@@ -32,6 +34,7 @@ class RateData {
               ?.map((p) => InsuranceProvider.fromJson(p))
               .toList() ??
           [],
+      insuranceDisclaimer: json['insuranceDisclaimer'],
     );
   }
 }

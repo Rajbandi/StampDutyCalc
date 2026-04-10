@@ -605,6 +605,7 @@
     "fuelEfficientLitresPer100km": 3.5,
     "dateFrom": "2025-07-01"
   },
+  "insuranceDisclaimer": "",
   "insuranceProviders": [
     {
       "name": "Compare the Market",

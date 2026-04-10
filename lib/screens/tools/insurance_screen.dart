@@ -106,20 +106,23 @@ class InsuranceScreen extends StatelessWidget {
                 ],
               ),
             ),
-          const SizedBox(height: 24),
-          Card(
-            color: theme.colorScheme.surfaceContainerLow,
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Text(
-                'External links open in your browser. We may receive a referral fee from some providers, which helps keep this app free.',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                  fontStyle: FontStyle.italic,
+          if (provider.rateData?.insuranceDisclaimer != null &&
+              provider.rateData!.insuranceDisclaimer!.isNotEmpty) ...[
+            const SizedBox(height: 24),
+            Card(
+              color: theme.colorScheme.surfaceContainerLow,
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Text(
+                  provider.rateData!.insuranceDisclaimer!,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                    fontStyle: FontStyle.italic,
+                  ),
                 ),
               ),
             ),
-          ),
+          ],
         ],
       ),
     );
