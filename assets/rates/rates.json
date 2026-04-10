@@ -605,6 +605,72 @@
     "fuelEfficientLitresPer100km": 3.5,
     "dateFrom": "2025-07-01"
   },
+  "insuranceProviders": [
+    {
+      "name": "Compare the Market",
+      "description": "Compare quotes from 12+ insurers",
+      "url": "https://www.comparethemarket.com.au/car-insurance/",
+      "logo": "\ud83e\udda6",
+      "colorHex": "0xFF1A4789",
+      "country": "AU"
+    },
+    {
+      "name": "iSelect",
+      "description": "Free quote comparison service",
+      "url": "https://www.iselect.com.au/car-insurance/",
+      "logo": "\u2713",
+      "colorHex": "0xFFE30613",
+      "country": "AU"
+    },
+    {
+      "name": "Finder",
+      "description": "Compare 30+ Australian insurers",
+      "url": "https://www.finder.com.au/car-insurance",
+      "logo": "\ud83d\udd0d",
+      "colorHex": "0xFF0B57D0",
+      "country": "AU"
+    },
+    {
+      "name": "Budget Direct",
+      "description": "Direct quotes, often cheapest",
+      "url": "https://www.budgetdirect.com.au/car-insurance/",
+      "logo": "\ud83d\udcb0",
+      "colorHex": "0xFFE60028",
+      "country": "AU"
+    },
+    {
+      "name": "Youi",
+      "description": "Personalised pricing",
+      "url": "https://www.youi.com.au/car-insurance",
+      "logo": "\ud83d\ude97",
+      "colorHex": "0xFF00B050",
+      "country": "AU"
+    },
+    {
+      "name": "AAMI",
+      "description": "Lucky you're with AAMI",
+      "url": "https://www.aami.com.au/car-insurance.html",
+      "logo": "\ud83d\udd35",
+      "colorHex": "0xFF003DA5",
+      "country": "AU"
+    },
+    {
+      "name": "AA Insurance",
+      "description": "Long-trusted NZ insurer",
+      "url": "https://www.aainsurance.co.nz/car-insurance/",
+      "logo": "\ud83d\ude97",
+      "colorHex": "0xFFFFCC00",
+      "country": "NZ"
+    },
+    {
+      "name": "State Insurance",
+      "description": "NZ comprehensive cover",
+      "url": "https://www.state.co.nz/car-insurance",
+      "logo": "\ud83d\udee1\ufe0f",
+      "colorHex": "0xFF0066B3",
+      "country": "NZ"
+    }
+  ],
   "fieldDefinitions": {
     "vehicleType": {
       "label": "Is this a passenger vehicle?",

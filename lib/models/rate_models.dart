@@ -4,6 +4,7 @@ class RateData {
   final List<Country> countries;
   final Map<String, FieldDefinition> fieldDefinitions;
   final LuxuryCarTax? luxuryCarTax;
+  final List<InsuranceProvider> insuranceProviders;
 
   RateData({
     required this.version,
@@ -11,6 +12,7 @@ class RateData {
     required this.countries,
     required this.fieldDefinitions,
     this.luxuryCarTax,
+    this.insuranceProviders = const [],
   });
 
   factory RateData.fromJson(Map<String, dynamic> json) {
@@ -26,6 +28,42 @@ class RateData {
       luxuryCarTax: json['luxuryCarTax'] != null
           ? LuxuryCarTax.fromJson(json['luxuryCarTax'])
           : null,
+      insuranceProviders: (json['insuranceProviders'] as List?)
+              ?.map((p) => InsuranceProvider.fromJson(p))
+              .toList() ??
+          [],
+    );
+  }
+}
+
+class InsuranceProvider {
+  final String name;
+  final String description;
+  final String url;
+  final String logo;
+  final int colorHex;
+  final String? country;
+
+  InsuranceProvider({
+    required this.name,
+    required this.description,
+    required this.url,
+    required this.logo,
+    required this.colorHex,
+    this.country,
+  });
+
+  factory InsuranceProvider.fromJson(Map<String, dynamic> json) {
+    return InsuranceProvider(
+      name: json['name'] ?? '',
+      description: json['description'] ?? '',
+      url: json['url'] ?? '',
+      logo: json['logo'] ?? '',
+      colorHex: int.tryParse(
+              (json['colorHex'] ?? '0xFF000000').toString().replaceAll('0x', ''),
+              radix: 16) ??
+          0xFF000000,
+      country: json['country'],
     );
   }
 }

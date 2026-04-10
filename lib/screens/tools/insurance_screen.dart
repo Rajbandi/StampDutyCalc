@@ -1,59 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../models/tool.dart';
+import '../../models/rate_models.dart';
+import '../../providers/calculator_provider.dart';
 import '../../widgets/tool_scaffold.dart';
 
 class InsuranceScreen extends StatelessWidget {
   const InsuranceScreen({super.key});
 
-  static const _providers = [
-    _Provider(
-      name: 'Compare the Market',
-      description: 'Compare quotes from 12+ insurers',
-      url: 'https://www.comparethemarket.com.au/car-insurance/',
-      logo: '🦦',
-      colorHex: 0xFF1A4789,
-    ),
-    _Provider(
-      name: 'iSelect',
-      description: 'Free quote comparison service',
-      url: 'https://www.iselect.com.au/car-insurance/',
-      logo: '✓',
-      colorHex: 0xFFE30613,
-    ),
-    _Provider(
-      name: 'Finder',
-      description: 'Compare 30+ Australian insurers',
-      url: 'https://www.finder.com.au/car-insurance',
-      logo: '🔍',
-      colorHex: 0xFF0B57D0,
-    ),
-    _Provider(
-      name: 'Budget Direct',
-      description: 'Direct quotes, often cheapest',
-      url: 'https://www.budgetdirect.com.au/car-insurance/',
-      logo: '💰',
-      colorHex: 0xFFE60028,
-    ),
-    _Provider(
-      name: 'Youi',
-      description: 'Personalised pricing',
-      url: 'https://www.youi.com.au/car-insurance',
-      logo: '🚗',
-      colorHex: 0xFF00B050,
-    ),
-    _Provider(
-      name: 'AAMI',
-      description: 'Lucky you\'re with AAMI',
-      url: 'https://www.aami.com.au/car-insurance.html',
-      logo: '🔵',
-      colorHex: 0xFF003DA5,
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final provider = context.watch<CalculatorProvider>();
+    final allProviders = provider.rateData?.insuranceProviders ?? [];
+
+    // Filter by selected country if any, otherwise show all
+    final selectedCountryCode = provider.selectedCountry?.code;
+    final providers = selectedCountryCode != null
+        ? allProviders
+            .where((p) => p.country == null || p.country == selectedCountryCode)
+            .toList()
+        : allProviders;
 
     return ToolScaffold(
       toolId: Tools.insurance.id,
@@ -104,68 +72,40 @@ class InsuranceScreen extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            'Tap a provider to get a free quote',
+            providers.isEmpty
+                ? 'No providers available for this country'
+                : 'Tap a provider to get a free quote',
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 12),
-          ..._providers.map((p) => Padding(
+          ...providers.map((p) => Padding(
                 padding: const EdgeInsets.only(bottom: 8),
-                child: Card(
-                  clipBehavior: Clip.antiAlias,
-                  child: InkWell(
-                    onTap: () => _launch(context, p.url),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 48,
-                            height: 48,
-                            decoration: BoxDecoration(
-                              color: Color(p.colorHex).withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Center(
-                              child: Text(
-                                p.logo,
-                                style: const TextStyle(fontSize: 24),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  p.name,
-                                  style: theme.textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  p.description,
-                                  style: theme.textTheme.bodySmall?.copyWith(
-                                    color: theme.colorScheme.onSurfaceVariant,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Icon(
-                            Icons.open_in_new,
-                            size: 18,
-                            color: theme.colorScheme.onSurfaceVariant,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                child: _ProviderCard(
+                  provider: p,
+                  onTap: () => _launch(context, p.url),
                 ),
               )),
+          if (providers.isEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 32),
+              child: Column(
+                children: [
+                  Icon(Icons.search_off,
+                      size: 48,
+                      color: theme.colorScheme.onSurfaceVariant
+                          .withValues(alpha: 0.3)),
+                  const SizedBox(height: 12),
+                  Text(
+                    'No insurance providers configured',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           const SizedBox(height: 24),
           Card(
             color: theme.colorScheme.surfaceContainerLow,
@@ -199,18 +139,67 @@ class InsuranceScreen extends StatelessWidget {
   }
 }
 
-class _Provider {
-  final String name;
-  final String description;
-  final String url;
-  final String logo;
-  final int colorHex;
+class _ProviderCard extends StatelessWidget {
+  final InsuranceProvider provider;
+  final VoidCallback onTap;
 
-  const _Provider({
-    required this.name,
-    required this.description,
-    required this.url,
-    required this.logo,
-    required this.colorHex,
-  });
+  const _ProviderCard({required this.provider, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: Color(provider.colorHex).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Center(
+                  child: Text(
+                    provider.logo,
+                    style: const TextStyle(fontSize: 24),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      provider.name,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      provider.description,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                Icons.open_in_new,
+                size: 18,
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
