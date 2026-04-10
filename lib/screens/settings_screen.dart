@@ -104,22 +104,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           ListTile(
             leading: const Icon(Icons.public),
-            title: const Text('Countries'),
+            title: const Text('Countries Supported'),
             subtitle: Text(
               rateData?.countries.map((c) => c.name).join(', ') ?? 'None',
             ),
           ),
-          ListTile(
-            leading: const Icon(Icons.location_on_outlined),
-            title: const Text('States / Regions'),
-            subtitle: Text(
-              rateData?.countries
-                      .expand((c) => c.states)
-                      .map((s) => s.code)
-                      .join(', ') ??
-                  'None',
+          if (calcProvider.selectedCountry != null)
+            ListTile(
+              leading: const Icon(Icons.location_on_outlined),
+              title: Text('${calcProvider.selectedCountry!.name} Regions'),
+              subtitle: Text(
+                calcProvider.selectedCountry!.states
+                    .map((s) => s.code)
+                    .join(', '),
+              ),
+            )
+          else
+            ListTile(
+              leading: const Icon(Icons.location_on_outlined),
+              title: const Text('Total Regions'),
+              subtitle: Text(
+                '${rateData?.countries.expand((c) => c.states).length ?? 0} across ${rateData?.countries.length ?? 0} countries',
+              ),
             ),
-          ),
 
           const Divider(),
 
