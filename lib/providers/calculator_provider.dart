@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/rate_models.dart';
 import '../models/calculation_result.dart';
 import '../services/rate_service.dart';
@@ -76,6 +77,8 @@ class CalculatorProvider extends ChangeNotifier {
     _ratesUpdated = false;
   }
 
+  static const _defaultCountryKey = 'default_country';
+
   Future<void> init() async {
     _isLoading = true;
     _error = null;
@@ -83,6 +86,19 @@ class CalculatorProvider extends ChangeNotifier {
 
     try {
       _rateData = await _rateService.loadRates();
+
+      // Restore last used country
+      final prefs = await SharedPreferences.getInstance();
+      final savedCode = prefs.getString(_defaultCountryKey);
+      if (savedCode != null && _rateData != null) {
+        final match = _rateData!.countries
+            .where((c) => c.code == savedCode)
+            .firstOrNull;
+        if (match != null) {
+          _selectedCountry = match;
+        }
+      }
+
       // Check for background updates after a short delay
       Future.delayed(const Duration(seconds: 3), () async {
         if (_rateService.hasRemoteUpdate) {
@@ -112,6 +128,9 @@ class CalculatorProvider extends ChangeNotifier {
     _vehiclePrice = null;
     _result = null;
     notifyListeners();
+    // Persist
+    SharedPreferences.getInstance()
+        .then((prefs) => prefs.setString(_defaultCountryKey, country.code));
   }
 
   void selectState(StateRegion state) {

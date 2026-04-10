@@ -57,6 +57,37 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
 
+          ListTile(
+            leading: const Icon(Icons.public),
+            title: const Text('Default Country'),
+            subtitle: Text(
+              calcProvider.selectedCountry?.name ?? 'Not set',
+            ),
+            trailing: DropdownButton<String>(
+              value: calcProvider.selectedCountry?.code,
+              underline: const SizedBox.shrink(),
+              items: [
+                const DropdownMenuItem(
+                  value: null,
+                  child: Text('None'),
+                ),
+                ...calcProvider.countries.map((c) => DropdownMenuItem(
+                      value: c.code,
+                      child: Text(c.name),
+                    )),
+              ],
+              onChanged: (code) {
+                if (code == null) {
+                  calcProvider.resetAll();
+                } else {
+                  final country = calcProvider.countries
+                      .firstWhere((c) => c.code == code);
+                  calcProvider.selectCountry(country);
+                }
+              },
+            ),
+          ),
+
           const Divider(),
 
           // ── Rates ───────────────────────────────────────

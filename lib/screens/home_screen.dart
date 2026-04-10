@@ -74,13 +74,72 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: _ModeSelector(provider: provider),
                       ),
                     ),
+                    // Quick launch for remembered country
+                    if (provider.selectedCountry != null)
+                      SliverPadding(
+                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
+                        sliver: SliverToBoxAdapter(
+                          child: Card(
+                            color: theme.colorScheme.primaryContainer,
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.push(context,
+                                    slideUpRoute(const CalculatorScreen()))
+                                    .then((_) {
+                                      provider.reset();
+                                      _loadBookmarks();
+                                    });
+                              },
+                              borderRadius: BorderRadius.circular(16),
+                              child: Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      countryFlag(provider.selectedCountry!.code),
+                                      style: const TextStyle(fontSize: 32),
+                                    ),
+                                    const SizedBox(width: 16),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Continue with ${provider.selectedCountry!.name}',
+                                            style: theme.textTheme.titleMedium?.copyWith(
+                                              fontWeight: FontWeight.w600,
+                                              color: theme.colorScheme.onPrimaryContainer,
+                                            ),
+                                          ),
+                                          Text(
+                                            'Tap to start calculating',
+                                            style: theme.textTheme.bodySmall?.copyWith(
+                                              color: theme.colorScheme.onPrimaryContainer
+                                                  .withValues(alpha: 0.7),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Icon(Icons.arrow_forward,
+                                        color: theme.colorScheme.onPrimaryContainer),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+
                     SliverPadding(
                       padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
                       sliver: SliverToBoxAdapter(
                         child: Text(
-                          provider.mode == CalculatorMode.stampDuty
-                              ? 'Select a country to calculate vehicle stamp duty'
-                              : 'Select a country to calculate total on-road costs',
+                          provider.selectedCountry != null
+                              ? 'Or choose another country'
+                              : provider.mode == CalculatorMode.stampDuty
+                                  ? 'Select a country to calculate vehicle stamp duty'
+                                  : 'Select a country to calculate total on-road costs',
                           style: theme.textTheme.bodyLarge?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant,
                           ),
