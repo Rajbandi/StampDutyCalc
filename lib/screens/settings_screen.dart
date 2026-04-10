@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../providers/calculator_provider.dart';
 import '../providers/theme_provider.dart';
 import '../providers/user_mode_provider.dart';
@@ -235,8 +236,79 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
 
+          const Divider(),
+
+          // ── Reset ──────────────────────────────────────
+          _SectionTitle('Reset'),
+          ListTile(
+            leading: Icon(Icons.restart_alt,
+                color: Theme.of(context).colorScheme.error),
+            title: Text(
+              'Reset to defaults',
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
+            subtitle: const Text(
+              'Clear mode, country, history, favourites, and all preferences',
+            ),
+            onTap: () => _confirmReset(context),
+          ),
+
           const SizedBox(height: 32),
         ],
+      ),
+    );
+  }
+
+  Future<void> _confirmReset(BuildContext context) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final calcProvider = context.read<CalculatorProvider>();
+    final modeProvider = context.read<UserModeProvider>();
+    final themeProvider = context.read<ThemeProvider>();
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Reset everything?'),
+        content: const Text(
+          'This will permanently delete:\n\n'
+          '- Your selected mode and business name\n'
+          '- Default country\n'
+          '- All calculation history\n'
+          '- Favourites and bookmarks\n'
+          '- Recently used tools\n'
+          '- Theme preference\n\n'
+          'Rate data will be re-downloaded. This cannot be undone.',
+        ),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('Cancel')),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(ctx).colorScheme.error,
+            ),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Reset'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+
+    // Re-init providers from cleared state
+    await modeProvider.init();
+    await themeProvider.init();
+    calcProvider.resetAll();
+    await calcProvider.init();
+
+    if (!mounted) return;
+    messenger.showSnackBar(
+      const SnackBar(
+        content: Text('App reset to defaults'),
+        behavior: SnackBarBehavior.floating,
       ),
     );
   }
