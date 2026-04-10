@@ -4,7 +4,7 @@
     "start_url": ".",
     "display": "standalone",
     "background_color": "#ffffff",
-    "theme_color": "#1565C0",
+    "theme_color": "#F4811F",
     "description": "Vehicle stamp duty calculator for Australia & New Zealand. Calculate duty instantly with up-to-date rates.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,

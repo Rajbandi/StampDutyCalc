@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  static const _primaryColor = Color(0xFF1565C0);
-  static const _secondaryColor = Color(0xFF00897B);
+  static const _primaryColor = Color(0xFFF4811F); // Saffron
+  static const _secondaryColor = Color(0xFF5D4037); // Warm brown complement
 
   static ThemeData get lightTheme {
     final colorScheme = ColorScheme.fromSeed(
