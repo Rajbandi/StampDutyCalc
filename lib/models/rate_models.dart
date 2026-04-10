@@ -249,6 +249,7 @@ class RateSlab {
 class FieldDefinition {
   final String label;
   final String type;
+  final String? helpText;
   final List<FieldOption> options;
   final Map<String, String>? showWhen;
   final DateTime? showBeforeDate;
@@ -257,6 +258,7 @@ class FieldDefinition {
   FieldDefinition({
     required this.label,
     required this.type,
+    this.helpText,
     required this.options,
     this.showWhen,
     this.showBeforeDate,
@@ -267,6 +269,7 @@ class FieldDefinition {
     return FieldDefinition(
       label: json['label'] ?? '',
       type: json['type'] ?? 'choice',
+      helpText: json['helpText'],
       options: (json['options'] as List?)
               ?.map((o) => FieldOption.fromJson(o))
               .toList() ??

@@ -264,6 +264,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
           padding: const EdgeInsets.only(bottom: 16),
           child: _FieldSelector(
             label: def.label,
+            helpText: def.helpText,
             options: def.options,
             selectedValue: provider.selections[fieldName],
             onSelected: (value) => provider.setSelection(fieldName, value),
@@ -408,12 +409,14 @@ class _SectionHeader extends StatelessWidget {
 
 class _FieldSelector extends StatelessWidget {
   final String label;
+  final String? helpText;
   final List<FieldOption> options;
   final String? selectedValue;
   final ValueChanged<String> onSelected;
 
   const _FieldSelector({
     required this.label,
+    this.helpText,
     required this.options,
     this.selectedValue,
     required this.onSelected,
@@ -441,6 +444,16 @@ class _FieldSelector extends StatelessWidget {
               fontWeight: FontWeight.w600,
             ),
           ),
+          if (helpText != null) ...[
+            const SizedBox(height: 2),
+            Text(
+              helpText!,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ],
           const SizedBox(height: 10),
           Wrap(
             spacing: 8,

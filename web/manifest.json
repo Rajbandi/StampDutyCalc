@@ -1,6 +1,6 @@
 {
     "name": "Vehicle Stamp Duty Calculator",
-    "short_name": "Stamp Duty",
+    "short_name": "Vehicle Stamp Duty",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#ffffff",

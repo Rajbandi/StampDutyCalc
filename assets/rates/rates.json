@@ -608,6 +608,7 @@
   "fieldDefinitions": {
     "vehicleType": {
       "label": "Is this a passenger vehicle?",
+      "helpText": "Sedans, wagons, SUVs, and 4WDs are passenger vehicles",
       "type": "choice",
       "options": [
         { "value": "passenger", "label": "Passenger" },
@@ -616,6 +617,7 @@
     },
     "registrationType": {
       "label": "New or used vehicle?",
+      "helpText": "Select 'Used' for vehicle transfers and change of ownership",
       "type": "choice",
       "options": [
         { "value": "new", "label": "New" },
@@ -624,6 +626,7 @@
     },
     "vicVehicleType": {
       "label": "What type of vehicle is being transferred?",
+      "helpText": "Non-passenger includes goods vehicles, buses for 9+ adults",
       "type": "choice",
       "options": [
         { "value": "car", "label": "Car" },
@@ -635,6 +638,7 @@
     },
     "vicCarCategory": {
       "label": "Does the car qualify for a concession?",
+      "helpText": "Green cars emit 120g CO2/km or less. Primary producer cars are used on farms.",
       "type": "choice",
       "showWhen": { "vicVehicleType": "car" },
       "options": [
@@ -645,6 +649,7 @@
     },
     "qldVehicleType": {
       "label": "What type of vehicle?",
+      "helpText": "Light vehicles are under 4.5 tonnes GVM",
       "type": "choice",
       "options": [
         { "value": "light", "label": "Light (< 4.5t)" },
@@ -654,6 +659,7 @@
     },
     "qldMotorType": {
       "label": "What is the engine/motor type?",
+      "helpText": "Check your vehicle registration papers for cylinder count",
       "type": "choice",
       "showWhen": { "qldVehicleType": "light" },
       "options": [
@@ -666,6 +672,7 @@
     },
     "vehicleUse": {
       "label": "How is the vehicle used?",
+      "helpText": "Commercial includes utes, vans, panel vans, and heavy vehicles",
       "type": "choice",
       "options": [
         { "value": "non-commercial", "label": "Non-Commercial" },
@@ -674,6 +681,7 @@
     },
     "saFleetDiscount": {
       "label": "Manufacturer's Fleet Discount?",
+      "helpText": "Select Yes if the price includes a manufacturer's fleet discount",
       "type": "choice",
       "showWhen": { "vehicleUse": "non-commercial" },
       "options": [
@@ -683,6 +691,7 @@
     },
     "vehicleWeight": {
       "label": "Is the vehicle light or heavy?",
+      "helpText": "Heavy vehicles have a Gross Vehicle Mass of 4.5 tonnes or more",
       "type": "choice",
       "options": [
         { "value": "light", "label": "Light (< 4.5t)" },
@@ -691,6 +700,7 @@
     },
     "actVehicleType": {
       "label": "What type of vehicle?",
+      "helpText": "Includes cars, SUVs, light commercial, motorcycles, and trailers",
       "type": "choice",
       "options": [
         { "value": "passenger", "label": "Passenger / Light Commercial" },
@@ -701,6 +711,7 @@
     },
     "greenRating": {
       "label": "What is the green vehicle rating?",
+      "helpText": "Check the Green Vehicle Guide for your car's star rating",
       "type": "choice",
       "showWhen": { "actVehicleType": "passenger", "registrationType": "new" },
       "showBeforeDate": "2025-09-01",
@@ -713,6 +724,7 @@
     },
     "emissionsRating": {
       "label": "What is the CO2 emissions rating?",
+      "helpText": "Find your vehicle's CO2 g/km on the compliance plate or Green Vehicle Guide",
       "type": "choice",
       "showWhen": { "actVehicleType": "passenger", "registrationType": "new" },
       "showFromDate": "2025-09-01",
@@ -728,6 +740,7 @@
     },
     "tasVehicleType": {
       "label": "What type of vehicle?",
+      "helpText": "Motorcycles and trailers use the commercial rate",
       "type": "choice",
       "options": [
         { "value": "passenger", "label": "Passenger (car, campervan)" },
@@ -738,6 +751,7 @@
     },
     "ntVehicleType": {
       "label": "What type of vehicle?",
+      "helpText": "Electric and plug-in hybrid vehicles may qualify for a concession",
       "type": "choice",
       "options": [
         { "value": "standard", "label": "Standard" },
@@ -746,6 +760,7 @@
     },
     "nzFuelType": {
       "label": "What fuel type?",
+      "helpText": "Affects your annual licensing and ACC levy costs",
       "type": "choice",
       "options": [
         { "value": "petrol", "label": "Petrol" },
@@ -755,6 +770,7 @@
     },
     "nzEngineSize": {
       "label": "What is the engine size?",
+      "helpText": "Found on your vehicle registration or compliance plate",
       "type": "choice",
       "options": [
         { "value": "0-1300cc", "label": "Up to 1300cc" },
