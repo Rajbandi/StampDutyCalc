@@ -257,6 +257,9 @@ class CalculatorProvider extends ChangeNotifier {
     _selectedCountry = null;
     reset();
     notifyListeners();
+    // Clear persisted default
+    SharedPreferences.getInstance()
+        .then((prefs) => prefs.remove(_defaultCountryKey));
   }
 
   bool shouldShowField(String fieldName) {

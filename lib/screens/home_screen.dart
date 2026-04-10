@@ -130,6 +130,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ],
                                       ),
                                     ),
+                                    IconButton(
+                                      icon: const Icon(Icons.close),
+                                      tooltip: 'Reset country selection',
+                                      color:
+                                          theme.colorScheme.onPrimaryContainer,
+                                      onPressed: () {
+                                        provider.resetAll();
+                                        setState(() =>
+                                            _showCountryList = false);
+                                      },
+                                    ),
                                     Icon(Icons.arrow_forward,
                                         color: theme.colorScheme.onPrimaryContainer),
                                   ],
