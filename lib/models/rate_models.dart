@@ -87,41 +87,37 @@ class StateRegion {
 class RateRule {
   final String? dateFrom;
   final String? dateTo;
-  final String? vehicleType;
-  final String? registrationType;
-  final String? qldCategory;
-  final String? vehicleWeight;
-  final String? vehicleUse;
-  final String? greenRating;
-  final String? fuelType;
+  final Map<String, String> filters;
   final List<RateSlab> slabs;
   final Map<String, double>? additionalFees;
 
   RateRule({
     this.dateFrom,
     this.dateTo,
-    this.vehicleType,
-    this.registrationType,
-    this.qldCategory,
-    this.vehicleWeight,
-    this.vehicleUse,
-    this.greenRating,
-    this.fuelType,
+    required this.filters,
     required this.slabs,
     this.additionalFees,
   });
 
+  // Known non-filter keys in the JSON
+  static const _nonFilterKeys = {
+    'dateFrom', 'dateTo', 'slabs', 'additionalFees',
+  };
+
   factory RateRule.fromJson(Map<String, dynamic> json) {
+    // Extract all string fields that aren't dates/slabs/fees as filters
+    final filters = <String, String>{};
+    for (final entry in json.entries) {
+      if (_nonFilterKeys.contains(entry.key)) continue;
+      if (entry.value is String) {
+        filters[entry.key] = entry.value;
+      }
+    }
+
     return RateRule(
       dateFrom: json['dateFrom'],
       dateTo: json['dateTo'],
-      vehicleType: json['vehicleType'],
-      registrationType: json['registrationType'],
-      qldCategory: json['qldCategory'],
-      vehicleWeight: json['vehicleWeight'],
-      vehicleUse: json['vehicleUse'],
-      greenRating: json['greenRating'],
-      fuelType: json['fuelType'],
+      filters: filters,
       slabs: (json['slabs'] as List)
           .map((s) => RateSlab.fromJson(s))
           .toList(),
@@ -130,34 +126,13 @@ class RateRule {
     );
   }
 
+  /// Check if this rule matches the user's selections.
+  /// A filter value of "any" matches everything.
   bool matches(Map<String, String> selections) {
-    if (vehicleType != null && vehicleType != 'any') {
-      final sel = selections['vehicleType'];
-      if (sel != null && sel != vehicleType) return false;
-    }
-    if (registrationType != null) {
-      final sel = selections['registrationType'];
-      if (sel != null && sel != registrationType) return false;
-    }
-    if (qldCategory != null) {
-      final sel = selections['qldCategory'];
-      if (sel != null && sel != qldCategory) return false;
-    }
-    if (vehicleWeight != null) {
-      final sel = selections['vehicleWeight'];
-      if (sel != null && sel != vehicleWeight) return false;
-    }
-    if (vehicleUse != null) {
-      final sel = selections['vehicleUse'];
-      if (sel != null && sel != vehicleUse) return false;
-    }
-    if (greenRating != null) {
-      final sel = selections['greenRating'];
-      if (sel != null && sel != greenRating) return false;
-    }
-    if (fuelType != null) {
-      final sel = selections['fuelType'];
-      if (sel != null && sel != fuelType) return false;
+    for (final entry in filters.entries) {
+      if (entry.value == 'any') continue;
+      final sel = selections[entry.key];
+      if (sel != null && sel != entry.value) return false;
     }
     return true;
   }

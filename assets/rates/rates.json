@@ -1,6 +1,6 @@
 {
-  "version": "2026.1",
-  "lastUpdated": "2026-04-01",
+  "version": "2026.2",
+  "lastUpdated": "2026-04-10",
   "countries": [
     {
       "code": "AU",
@@ -41,8 +41,10 @@
               "vehicleType": "passenger",
               "registrationType": "new",
               "slabs": [
-                { "min": 0, "max": 69152, "rate": 6.4, "per": 200 },
-                { "min": 69152, "max": null, "rate": 10.4, "per": 200 }
+                { "min": 0, "max": 80567, "rate": 8.4, "per": 200 },
+                { "min": 80567, "max": 100000, "rate": 10.4, "per": 200 },
+                { "min": 100000, "max": 150000, "rate": 14, "per": 200 },
+                { "min": 150000, "max": null, "rate": 18, "per": 200 }
               ]
             },
             {
@@ -69,49 +71,75 @@
           "vehicleFields": ["qldCategory"],
           "rates": [
             {
-              "dateFrom": "2024-07-01",
+              "dateFrom": "2023-03-22",
               "qldCategory": "1-4cyl",
-              "slabs": [{ "min": 0, "max": null, "rate": 3, "per": 100 }]
+              "slabs": [
+                { "min": 0, "max": 100000, "rate": 3, "per": 100 },
+                { "min": 100000, "max": null, "rate": 5, "per": 100 }
+              ]
             },
             {
-              "dateFrom": "2024-07-01",
+              "dateFrom": "2023-03-22",
               "qldCategory": "5-6cyl",
-              "slabs": [{ "min": 0, "max": null, "rate": 3.5, "per": 100 }]
+              "slabs": [
+                { "min": 0, "max": 100000, "rate": 3.5, "per": 100 },
+                { "min": 100000, "max": null, "rate": 5.5, "per": 100 }
+              ]
             },
             {
-              "dateFrom": "2024-07-01",
+              "dateFrom": "2023-03-22",
               "qldCategory": "7+cyl",
-              "slabs": [{ "min": 0, "max": null, "rate": 4, "per": 100 }]
+              "slabs": [
+                { "min": 0, "max": 100000, "rate": 4, "per": 100 },
+                { "min": 100000, "max": null, "rate": 6, "per": 100 }
+              ]
             },
             {
-              "dateFrom": "2024-07-01",
+              "dateFrom": "2023-03-22",
               "qldCategory": "2rotor",
-              "slabs": [{ "min": 0, "max": null, "rate": 3, "per": 100 }]
+              "slabs": [
+                { "min": 0, "max": 100000, "rate": 3, "per": 100 },
+                { "min": 100000, "max": null, "rate": 5, "per": 100 }
+              ]
             },
             {
-              "dateFrom": "2024-07-01",
+              "dateFrom": "2023-03-22",
               "qldCategory": "3rotor",
-              "slabs": [{ "min": 0, "max": null, "rate": 3.5, "per": 100 }]
+              "slabs": [
+                { "min": 0, "max": 100000, "rate": 3.5, "per": 100 },
+                { "min": 100000, "max": null, "rate": 5.5, "per": 100 }
+              ]
             },
             {
-              "dateFrom": "2024-07-01",
+              "dateFrom": "2023-03-22",
               "qldCategory": "electric",
-              "slabs": [{ "min": 0, "max": null, "rate": 2, "per": 100 }]
+              "slabs": [
+                { "min": 0, "max": 100000, "rate": 2, "per": 100 },
+                { "min": 100000, "max": null, "rate": 4, "per": 100 }
+              ]
             },
             {
-              "dateFrom": "2024-07-01",
+              "dateFrom": "2023-03-22",
               "qldCategory": "hybrid",
-              "slabs": [{ "min": 0, "max": null, "rate": 2, "per": 100 }]
+              "slabs": [
+                { "min": 0, "max": 100000, "rate": 2, "per": 100 },
+                { "min": 100000, "max": null, "rate": 4, "per": 100 }
+              ]
             },
             {
-              "dateFrom": "2024-07-01",
+              "dateFrom": "2023-03-22",
               "qldCategory": "steam",
-              "slabs": [{ "min": 0, "max": null, "rate": 3, "per": 100 }]
+              "slabs": [
+                { "min": 0, "max": 100000, "rate": 3, "per": 100 },
+                { "min": 100000, "max": null, "rate": 5, "per": 100 }
+              ]
             },
             {
-              "dateFrom": "2024-07-01",
+              "dateFrom": "2023-03-22",
               "qldCategory": "special",
-              "slabs": [{ "min": 0, "max": null, "rate": 25, "per": 100 }]
+              "slabs": [
+                { "min": 0, "max": null, "rate": 0, "per": 100, "base": 25 }
+              ]
             }
           ]
         },
@@ -168,61 +196,90 @@
         {
           "code": "ACT",
           "name": "Australian Capital Territory",
-          "vehicleFields": ["vehicleType", "registrationType", "greenRating"],
+          "vehicleFields": ["vehicleType", "registrationType", "emissionsRating"],
           "rates": [
             {
-              "dateFrom": "2024-07-01",
+              "dateFrom": "2025-09-01",
               "vehicleType": "passenger",
               "registrationType": "new",
-              "greenRating": "A",
+              "emissionsRating": "AAA",
               "slabs": [
-                { "min": 0, "max": null, "rate": 0, "per": 100 }
+                { "min": 0, "max": 45000, "rate": 2.5, "per": 100 },
+                { "min": 45000, "max": 80000, "rate": 4, "per": 100, "base": 1125, "chargeFrom": 45000 },
+                { "min": 80000, "max": null, "rate": 8, "per": 100, "base": 2525, "chargeFrom": 80000 }
               ]
             },
             {
-              "dateFrom": "2024-07-01",
+              "dateFrom": "2025-09-01",
               "vehicleType": "passenger",
               "registrationType": "new",
-              "greenRating": "B",
+              "emissionsRating": "AA",
               "slabs": [
-                { "min": 0, "max": 45000, "rate": 2, "per": 100 },
-                { "min": 45000, "max": null, "rate": 4, "per": 100, "base": 900, "chargeFrom": 45000 }
+                { "min": 0, "max": 45000, "rate": 2.67, "per": 100 },
+                { "min": 45000, "max": 80000, "rate": 4.41, "per": 100, "base": 1201.50, "chargeFrom": 45000 },
+                { "min": 80000, "max": null, "rate": 8, "per": 100, "base": 2745, "chargeFrom": 80000 }
               ]
             },
             {
-              "dateFrom": "2024-07-01",
+              "dateFrom": "2025-09-01",
               "vehicleType": "passenger",
               "registrationType": "new",
-              "greenRating": "C",
+              "emissionsRating": "A",
+              "slabs": [
+                { "min": 0, "max": 45000, "rate": 2.84, "per": 100 },
+                { "min": 45000, "max": 80000, "rate": 4.81, "per": 100, "base": 1278, "chargeFrom": 45000 },
+                { "min": 80000, "max": null, "rate": 8, "per": 100, "base": 2961.50, "chargeFrom": 80000 }
+              ]
+            },
+            {
+              "dateFrom": "2025-09-01",
+              "vehicleType": "passenger",
+              "registrationType": "new",
+              "emissionsRating": "B",
               "slabs": [
                 { "min": 0, "max": 45000, "rate": 3, "per": 100 },
-                { "min": 45000, "max": null, "rate": 5, "per": 100, "base": 1350, "chargeFrom": 45000 }
+                { "min": 45000, "max": 80000, "rate": 5.22, "per": 100, "base": 1350, "chargeFrom": 45000 },
+                { "min": 80000, "max": null, "rate": 8, "per": 100, "base": 3177, "chargeFrom": 80000 }
               ]
             },
             {
-              "dateFrom": "2024-07-01",
+              "dateFrom": "2025-09-01",
               "vehicleType": "passenger",
               "registrationType": "new",
-              "greenRating": "D",
+              "emissionsRating": "C",
               "slabs": [
-                { "min": 0, "max": 45000, "rate": 4, "per": 100 },
-                { "min": 45000, "max": null, "rate": 6, "per": 100, "base": 1800, "chargeFrom": 45000 }
+                { "min": 0, "max": 45000, "rate": 3.17, "per": 100 },
+                { "min": 45000, "max": 80000, "rate": 5.62, "per": 100, "base": 1426.50, "chargeFrom": 45000 },
+                { "min": 80000, "max": null, "rate": 8, "per": 100, "base": 3393.50, "chargeFrom": 80000 }
               ]
             },
             {
-              "dateFrom": "2024-07-01",
+              "dateFrom": "2025-09-01",
+              "vehicleType": "passenger",
+              "registrationType": "new",
+              "emissionsRating": "D",
+              "slabs": [
+                { "min": 0, "max": 45000, "rate": 4.53, "per": 100 },
+                { "min": 45000, "max": 80000, "rate": 7.81, "per": 100, "base": 2038.50, "chargeFrom": 45000 },
+                { "min": 80000, "max": null, "rate": 8, "per": 100, "base": 4772, "chargeFrom": 80000 }
+              ]
+            },
+            {
+              "dateFrom": "2025-09-01",
               "vehicleType": "non-passenger",
               "registrationType": "new",
               "slabs": [
-                { "min": 0, "max": null, "rate": 3, "per": 100 }
+                { "min": 0, "max": null, "rate": 3.17, "per": 100 }
               ]
             },
             {
-              "dateFrom": "2024-07-01",
+              "dateFrom": "2025-09-01",
               "vehicleType": "any",
               "registrationType": "used",
               "slabs": [
-                { "min": 0, "max": null, "rate": 3, "per": 100 }
+                { "min": 0, "max": 45000, "rate": 3.17, "per": 100 },
+                { "min": 45000, "max": 80000, "rate": 5.62, "per": 100, "base": 1426.50, "chargeFrom": 45000 },
+                { "min": 80000, "max": null, "rate": 8, "per": 100, "base": 3393.50, "chargeFrom": 80000 }
               ]
             }
           ]
@@ -230,15 +287,30 @@
         {
           "code": "TAS",
           "name": "Tasmania",
-          "vehicleFields": [],
+          "vehicleFields": ["tasVehicleType"],
           "rates": [
             {
               "dateFrom": "2024-07-01",
+              "tasVehicleType": "passenger",
               "slabs": [
                 { "min": 0, "max": 600, "rate": 0, "per": 100, "base": 20 },
                 { "min": 600, "max": 35000, "rate": 3, "per": 100 },
                 { "min": 35000, "max": 40000, "rate": 11, "per": 100, "base": 1050 },
                 { "min": 40000, "max": null, "rate": 4, "per": 100 }
+              ]
+            },
+            {
+              "dateFrom": "2024-07-01",
+              "tasVehicleType": "commercial",
+              "slabs": [
+                { "min": 0, "max": null, "rate": 3, "per": 100, "base": 20 }
+              ]
+            },
+            {
+              "dateFrom": "2024-07-01",
+              "tasVehicleType": "heavy",
+              "slabs": [
+                { "min": 0, "max": null, "rate": 1, "per": 100, "base": 20 }
               ]
             }
           ]
@@ -246,12 +318,22 @@
         {
           "code": "NT",
           "name": "Northern Territory",
-          "vehicleFields": [],
+          "vehicleFields": ["ntVehicleType"],
           "rates": [
             {
               "dateFrom": "2024-07-01",
+              "ntVehicleType": "standard",
               "slabs": [
                 { "min": 0, "max": null, "rate": 3, "per": 100 }
+              ]
+            },
+            {
+              "dateFrom": "2022-07-01",
+              "dateTo": "2027-06-30",
+              "ntVehicleType": "electric",
+              "slabs": [
+                { "min": 0, "max": 50000, "rate": 0, "per": 100 },
+                { "min": 50000, "max": null, "rate": 3, "per": 100, "chargeFrom": 50000 }
               ]
             }
           ]
@@ -268,56 +350,106 @@
         {
           "code": "NZ",
           "name": "New Zealand",
-          "vehicleFields": ["fuelType"],
-          "description": "NZ charges registration & licensing fees plus ACC levy based on fuel type and vehicle risk rating. Stamp duty equivalent is calculated on the vehicle value.",
+          "vehicleFields": ["nzEngineSize", "nzFuelType"],
+          "description": "New Zealand does not charge stamp duty on vehicles. Costs shown are annual registration and licensing fees including ACC levy, which vary by engine size and fuel type.",
           "rates": [
             {
-              "dateFrom": "2024-07-01",
-              "fuelType": "petrol",
+              "dateFrom": "2025-07-01",
+              "nzFuelType": "petrol",
+              "nzEngineSize": "0-1300cc",
               "slabs": [
-                { "min": 0, "max": null, "rate": 2.5, "per": 100 }
+                { "min": 0, "max": null, "rate": 0, "per": 100 }
               ],
               "additionalFees": {
-                "accLevy": 390.78,
-                "registrationFee": 103.52,
-                "platesFee": 20.24
+                "annualLicensingTotal": 282.04
               }
             },
             {
-              "dateFrom": "2024-07-01",
-              "fuelType": "diesel",
+              "dateFrom": "2025-07-01",
+              "nzFuelType": "petrol",
+              "nzEngineSize": "1301-2600cc",
               "slabs": [
-                { "min": 0, "max": null, "rate": 2.5, "per": 100 }
+                { "min": 0, "max": null, "rate": 0, "per": 100 }
               ],
               "additionalFees": {
-                "accLevy": 390.78,
-                "registrationFee": 103.52,
-                "platesFee": 20.24,
-                "rucFee": 76.00
+                "annualLicensingTotal": 325.74
               }
             },
             {
-              "dateFrom": "2024-07-01",
-              "fuelType": "electric",
+              "dateFrom": "2025-07-01",
+              "nzFuelType": "petrol",
+              "nzEngineSize": "2601-4000cc",
               "slabs": [
-                { "min": 0, "max": null, "rate": 2.5, "per": 100 }
+                { "min": 0, "max": null, "rate": 0, "per": 100 }
               ],
               "additionalFees": {
-                "accLevy": 390.78,
-                "registrationFee": 103.52,
-                "platesFee": 20.24
+                "annualLicensingTotal": 356.79
               }
             },
             {
-              "dateFrom": "2024-07-01",
-              "fuelType": "hybrid",
+              "dateFrom": "2025-07-01",
+              "nzFuelType": "petrol",
+              "nzEngineSize": "4001cc+",
               "slabs": [
-                { "min": 0, "max": null, "rate": 2.5, "per": 100 }
+                { "min": 0, "max": null, "rate": 0, "per": 100 }
               ],
               "additionalFees": {
-                "accLevy": 390.78,
-                "registrationFee": 103.52,
-                "platesFee": 20.24
+                "annualLicensingTotal": 463.74
+              }
+            },
+            {
+              "dateFrom": "2025-07-01",
+              "nzFuelType": "diesel",
+              "nzEngineSize": "0-1300cc",
+              "slabs": [
+                { "min": 0, "max": null, "rate": 0, "per": 100 }
+              ],
+              "additionalFees": {
+                "annualLicensingTotal": 350.66
+              }
+            },
+            {
+              "dateFrom": "2025-07-01",
+              "nzFuelType": "diesel",
+              "nzEngineSize": "1301-2600cc",
+              "slabs": [
+                { "min": 0, "max": null, "rate": 0, "per": 100 }
+              ],
+              "additionalFees": {
+                "annualLicensingTotal": 394.36
+              }
+            },
+            {
+              "dateFrom": "2025-07-01",
+              "nzFuelType": "diesel",
+              "nzEngineSize": "2601-4000cc",
+              "slabs": [
+                { "min": 0, "max": null, "rate": 0, "per": 100 }
+              ],
+              "additionalFees": {
+                "annualLicensingTotal": 425.41
+              }
+            },
+            {
+              "dateFrom": "2025-07-01",
+              "nzFuelType": "diesel",
+              "nzEngineSize": "4001cc+",
+              "slabs": [
+                { "min": 0, "max": null, "rate": 0, "per": 100 }
+              ],
+              "additionalFees": {
+                "annualLicensingTotal": 532.36
+              }
+            },
+            {
+              "dateFrom": "2025-07-01",
+              "nzFuelType": "electric",
+              "nzEngineSize": "any",
+              "slabs": [
+                { "min": 0, "max": null, "rate": 0, "per": 100 }
+              ],
+              "additionalFees": {
+                "annualLicensingTotal": 350.66
               }
             }
           ]
@@ -373,15 +505,54 @@
         { "value": "special", "label": "Special Purpose" }
       ]
     },
-    "greenRating": {
-      "label": "Green Rating",
+    "emissionsRating": {
+      "label": "Emissions Rating",
       "type": "choice",
       "showWhen": { "vehicleType": "passenger", "registrationType": "new" },
       "options": [
-        { "value": "A", "label": "A - 5+ Stars (Exempt)" },
-        { "value": "B", "label": "B - 4 to 4.5 Stars" },
-        { "value": "C", "label": "C - 3 to 3.5 Stars" },
-        { "value": "D", "label": "D - 1 to 2.5 Stars" }
+        { "value": "AAA", "label": "AAA - Zero emissions (0 g/km)" },
+        { "value": "AA", "label": "AA - 1 to 65 g/km" },
+        { "value": "A", "label": "A - 66 to 130 g/km" },
+        { "value": "B", "label": "B - 131 to 175 g/km" },
+        { "value": "C", "label": "C - 176 to 220 g/km" },
+        { "value": "D", "label": "D - 221+ g/km" }
+      ]
+    },
+    "tasVehicleType": {
+      "label": "Vehicle Type",
+      "type": "choice",
+      "options": [
+        { "value": "passenger", "label": "Passenger Vehicle" },
+        { "value": "commercial", "label": "Commercial (ute, van, motorcycle)" },
+        { "value": "heavy", "label": "Heavy Vehicle (> 4.5t)" }
+      ]
+    },
+    "ntVehicleType": {
+      "label": "Vehicle Type",
+      "type": "choice",
+      "options": [
+        { "value": "standard", "label": "Standard Vehicle" },
+        { "value": "electric", "label": "Electric / Plug-in Hybrid" }
+      ]
+    },
+    "nzFuelType": {
+      "label": "Fuel Type",
+      "type": "choice",
+      "options": [
+        { "value": "petrol", "label": "Petrol" },
+        { "value": "diesel", "label": "Diesel" },
+        { "value": "electric", "label": "Electric" }
+      ]
+    },
+    "nzEngineSize": {
+      "label": "Engine Size",
+      "type": "choice",
+      "options": [
+        { "value": "0-1300cc", "label": "Up to 1300cc" },
+        { "value": "1301-2600cc", "label": "1301 - 2600cc" },
+        { "value": "2601-4000cc", "label": "2601 - 4000cc" },
+        { "value": "4001cc+", "label": "4001cc+" },
+        { "value": "any", "label": "N/A (Electric)" }
       ]
     },
     "fuelType": {
