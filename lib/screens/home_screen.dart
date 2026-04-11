@@ -156,13 +156,10 @@ class _HomeScreenState extends State<HomeScreen> {
         onRefresh: _onRefresh,
         child: CustomScrollView(
         slivers: [
-          SliverAppBar.large(
+          SliverAppBar.medium(
             title: Text(
-              userMode.mode == UserMode.dealer &&
-                      userMode.businessName.isNotEmpty
-                  ? userMode.businessName
-                  : 'Vehicle Calculator',
-              style: theme.textTheme.headlineMedium?.copyWith(
+              _titleFor(userMode),
+              style: theme.textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -345,6 +342,21 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       ),
     );
+  }
+
+  String _titleFor(UserModeProvider userMode) {
+    switch (userMode.mode) {
+      case UserMode.dealer:
+        return userMode.businessName.isNotEmpty
+            ? userMode.businessName
+            : 'Dealer Quotes';
+      case UserMode.buyer:
+        return 'Buyer Tools';
+      case UserMode.seller:
+        return 'Seller Toolkit';
+      case UserMode.simple:
+        return 'Vehicle Calculator';
+    }
   }
 
   bool _matchesSearch(Tool tool) {
