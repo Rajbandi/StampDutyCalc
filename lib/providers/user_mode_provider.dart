@@ -38,14 +38,32 @@ class UserModeProvider extends ChangeNotifier {
   static const _modeKey = 'user_mode';
   static const _businessNameKey = 'business_name';
   static const _salespersonKey = 'salesperson_name';
+  static const _abnKey = 'dealer_abn';
+  static const _phoneKey = 'dealer_phone';
+  static const _emailKey = 'dealer_email';
+  static const _addressKey = 'dealer_address';
+  static const _validityKey = 'quote_validity_days';
+  static const _footerKey = 'quote_footer_text';
 
   UserMode _mode = UserMode.simple;
   String _businessName = '';
   String _salespersonName = '';
+  String _abn = '';
+  String _dealerPhone = '';
+  String _dealerEmail = '';
+  String _dealerAddress = '';
+  int _quoteValidityDays = 7;
+  String _quoteFooterText = '';
 
   UserMode get mode => _mode;
   String get businessName => _businessName;
   String get salespersonName => _salespersonName;
+  String get abn => _abn;
+  String get dealerPhone => _dealerPhone;
+  String get dealerEmail => _dealerEmail;
+  String get dealerAddress => _dealerAddress;
+  int get quoteValidityDays => _quoteValidityDays;
+  String get quoteFooterText => _quoteFooterText;
 
   // Visibility flags driven by mode
   bool get showSearchBar => _mode == UserMode.dealer;
@@ -67,6 +85,12 @@ class UserModeProvider extends ChangeNotifier {
     }
     _businessName = prefs.getString(_businessNameKey) ?? '';
     _salespersonName = prefs.getString(_salespersonKey) ?? '';
+    _abn = prefs.getString(_abnKey) ?? '';
+    _dealerPhone = prefs.getString(_phoneKey) ?? '';
+    _dealerEmail = prefs.getString(_emailKey) ?? '';
+    _dealerAddress = prefs.getString(_addressKey) ?? '';
+    _quoteValidityDays = prefs.getInt(_validityKey) ?? 7;
+    _quoteFooterText = prefs.getString(_footerKey) ?? '';
     notifyListeners();
   }
 
@@ -89,5 +113,47 @@ class UserModeProvider extends ChangeNotifier {
     notifyListeners();
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_salespersonKey, name);
+  }
+
+  Future<void> setAbn(String value) async {
+    _abn = value;
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_abnKey, value);
+  }
+
+  Future<void> setDealerPhone(String value) async {
+    _dealerPhone = value;
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_phoneKey, value);
+  }
+
+  Future<void> setDealerEmail(String value) async {
+    _dealerEmail = value;
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_emailKey, value);
+  }
+
+  Future<void> setDealerAddress(String value) async {
+    _dealerAddress = value;
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_addressKey, value);
+  }
+
+  Future<void> setQuoteValidityDays(int days) async {
+    _quoteValidityDays = days;
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_validityKey, days);
+  }
+
+  Future<void> setQuoteFooterText(String value) async {
+    _quoteFooterText = value;
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_footerKey, value);
   }
 }

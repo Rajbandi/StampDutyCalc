@@ -20,6 +20,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _checkingUpdates = false;
   final TextEditingController _businessNameCtrl = TextEditingController();
   final TextEditingController _salespersonCtrl = TextEditingController();
+  final TextEditingController _abnCtrl = TextEditingController();
+  final TextEditingController _phoneCtrl = TextEditingController();
+  final TextEditingController _emailCtrl = TextEditingController();
+  final TextEditingController _addressCtrl = TextEditingController();
+  final TextEditingController _footerCtrl = TextEditingController();
   bool _ctrlsInitialised = false;
 
   @override
@@ -31,6 +36,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
       final modeProvider = context.read<UserModeProvider>();
       _businessNameCtrl.text = modeProvider.businessName;
       _salespersonCtrl.text = modeProvider.salespersonName;
+      _abnCtrl.text = modeProvider.abn;
+      _phoneCtrl.text = modeProvider.dealerPhone;
+      _emailCtrl.text = modeProvider.dealerEmail;
+      _addressCtrl.text = modeProvider.dealerAddress;
+      _footerCtrl.text = modeProvider.quoteFooterText;
       _ctrlsInitialised = true;
     }
   }
@@ -39,6 +49,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void dispose() {
     _businessNameCtrl.dispose();
     _salespersonCtrl.dispose();
+    _abnCtrl.dispose();
+    _phoneCtrl.dispose();
+    _emailCtrl.dispose();
+    _addressCtrl.dispose();
+    _footerCtrl.dispose();
     super.dispose();
   }
 
@@ -97,6 +112,120 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   prefixIcon: Icon(Icons.person_outline),
                 ),
                 onChanged: (v) => modeProvider.setSalespersonName(v),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
+              child: Text(
+                'Quote details',
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      fontWeight: FontWeight.w600,
+                    ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: TextField(
+                controller: _abnCtrl,
+                decoration: const InputDecoration(
+                  labelText: 'ABN',
+                  hintText: 'e.g. 12 345 678 901',
+                  prefixIcon: Icon(Icons.numbers),
+                ),
+                keyboardType: TextInputType.number,
+                onChanged: (v) => modeProvider.setAbn(v),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: TextField(
+                controller: _phoneCtrl,
+                decoration: const InputDecoration(
+                  labelText: 'Phone',
+                  hintText: 'Contact number on the quote',
+                  prefixIcon: Icon(Icons.phone_outlined),
+                ),
+                keyboardType: TextInputType.phone,
+                onChanged: (v) => modeProvider.setDealerPhone(v),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: TextField(
+                controller: _emailCtrl,
+                decoration: const InputDecoration(
+                  labelText: 'Email',
+                  hintText: 'Contact email on the quote',
+                  prefixIcon: Icon(Icons.email_outlined),
+                ),
+                keyboardType: TextInputType.emailAddress,
+                onChanged: (v) => modeProvider.setDealerEmail(v),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: TextField(
+                controller: _addressCtrl,
+                decoration: const InputDecoration(
+                  labelText: 'Business address',
+                  hintText: 'Street, suburb, state, postcode',
+                  prefixIcon: Icon(Icons.location_on_outlined),
+                  alignLabelWithHint: true,
+                ),
+                minLines: 2,
+                maxLines: 3,
+                keyboardType: TextInputType.streetAddress,
+                textInputAction: TextInputAction.newline,
+                onChanged: (v) => modeProvider.setDealerAddress(v),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: InputDecorator(
+                decoration: const InputDecoration(
+                  labelText: 'Quote valid for',
+                  prefixIcon: Icon(Icons.schedule),
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<int>(
+                    value: modeProvider.quoteValidityDays,
+                    isExpanded: true,
+                    items: const [
+                      DropdownMenuItem(value: 3, child: Text('3 days')),
+                      DropdownMenuItem(value: 7, child: Text('7 days')),
+                      DropdownMenuItem(value: 14, child: Text('14 days')),
+                      DropdownMenuItem(value: 30, child: Text('30 days')),
+                    ],
+                    onChanged: (v) {
+                      if (v != null) modeProvider.setQuoteValidityDays(v);
+                    },
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: TextField(
+                controller: _footerCtrl,
+                decoration: const InputDecoration(
+                  labelText: 'Quote footer / terms',
+                  hintText:
+                      'Optional - e.g. "Not a tax invoice. Subject to availability."',
+                  prefixIcon: Icon(Icons.notes),
+                  alignLabelWithHint: true,
+                ),
+                minLines: 2,
+                maxLines: 4,
+                textInputAction: TextInputAction.newline,
+                onChanged: (v) => modeProvider.setQuoteFooterText(v),
               ),
             ),
           ],
@@ -305,7 +434,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         title: const Text('Reset everything?'),
         content: const Text(
           'This will permanently delete:\n\n'
-          '- Your selected mode and business name\n'
+          '- Your selected mode, business name, and quote details\n'
           '- Default country\n'
           '- All calculation history\n'
           '- Favourites and bookmarks\n'

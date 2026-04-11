@@ -11,6 +11,7 @@ import '../providers/calculator_provider.dart';
 import '../providers/user_mode_provider.dart';
 import '../models/calculation_result.dart';
 import '../services/finance_calculator.dart';
+import '../services/quote_meta_service.dart';
 import '../utils/currency_input_formatter.dart';
 import '../widgets/result_card.dart';
 
@@ -24,9 +25,41 @@ class ResultScreen extends StatefulWidget {
 class _ResultScreenState extends State<ResultScreen> {
   final _repaintKey = GlobalKey();
 
+  // Dealer-mode quote metadata, populated once on first build.
+  String? _quoteNumber;
+  DateTime? _issueDate;
+  DateTime? _validUntil;
+  bool _metaInitialised = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_metaInitialised) return;
+
+    final userMode = context.read<UserModeProvider>();
+    if (userMode.mode != UserMode.dealer) {
+      _metaInitialised = true;
+      return;
+    }
+
+    final now = DateTime.now();
+    final validDays = userMode.quoteValidityDays;
+    _metaInitialised = true;
+
+    QuoteMetaService.nextQuoteNumber(now).then((number) {
+      if (!mounted) return;
+      setState(() {
+        _quoteNumber = number;
+        _issueDate = now;
+        _validUntil = now.add(Duration(days: validDays));
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<CalculatorProvider>();
+    final userMode = context.watch<UserModeProvider>();
     final result = provider.result;
 
     if (result == null) {
@@ -37,6 +70,7 @@ class _ResultScreenState extends State<ResultScreen> {
     }
 
     final theme = Theme.of(context);
+    final isDealer = userMode.mode == UserMode.dealer;
     final formatter = NumberFormat.currency(
       symbol: result.currencySymbol,
       decimalDigits: 2,
@@ -73,13 +107,18 @@ class _ResultScreenState extends State<ResultScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
             // Dealer branding header (only in dealer mode)
-            if (context.watch<UserModeProvider>().mode == UserMode.dealer)
+            if (isDealer)
               _DealerBrandingHeader(
-                businessName:
-                    context.watch<UserModeProvider>().businessName,
-                salespersonName:
-                    context.watch<UserModeProvider>().salespersonName,
+                businessName: userMode.businessName,
+                salespersonName: userMode.salespersonName,
                 customerName: provider.customerName,
+                abn: userMode.abn,
+                dealerPhone: userMode.dealerPhone,
+                dealerEmail: userMode.dealerEmail,
+                dealerAddress: userMode.dealerAddress,
+                quoteNumber: _quoteNumber,
+                issueDate: _issueDate,
+                validUntil: _validUntil,
               ),
             // Main result card
             _ResultHeroCard(
@@ -117,6 +156,22 @@ class _ResultScreenState extends State<ResultScreen> {
             ),
             const SizedBox(height: 12),
             _DetailsCard(result: result, formatter: formatter),
+
+            // Dealer quote footer (terms/conditions) — inside RepaintBoundary
+            // so it's captured in the shared PNG.
+            if (isDealer && userMode.quoteFooterText.trim().isNotEmpty) ...[
+              const SizedBox(height: 16),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: Text(
+                  userMode.quoteFooterText,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ),
+            ],
                   ],
                 ),
               ),
@@ -228,12 +283,17 @@ class _ResultScreenState extends State<ResultScreen> {
       if (byteData == null) return;
 
       final dir = await getTemporaryDirectory();
-      final file = File('${dir.path}/stamp_duty_result.png');
+      final fileName = _quoteNumber != null
+          ? 'quote_$_quoteNumber.png'
+          : 'stamp_duty_result.png';
+      final file = File('${dir.path}/$fileName');
       await file.writeAsBytes(byteData.buffer.asUint8List());
 
       await Share.shareXFiles(
         [XFile(file.path)],
-        text: 'Stamp Duty Calculator Result',
+        text: _quoteNumber != null
+            ? 'Quote #$_quoteNumber'
+            : 'Stamp Duty Calculator Result',
       );
     } catch (e) {
       if (context.mounted) {
@@ -1152,56 +1212,172 @@ class _DealerBrandingHeader extends StatelessWidget {
   final String businessName;
   final String salespersonName;
   final String customerName;
+  final String abn;
+  final String dealerPhone;
+  final String dealerEmail;
+  final String dealerAddress;
+  final String? quoteNumber;
+  final DateTime? issueDate;
+  final DateTime? validUntil;
 
   const _DealerBrandingHeader({
     required this.businessName,
     required this.salespersonName,
     required this.customerName,
+    required this.abn,
+    required this.dealerPhone,
+    required this.dealerEmail,
+    required this.dealerAddress,
+    required this.quoteNumber,
+    required this.issueDate,
+    required this.validUntil,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    if (businessName.isEmpty &&
-        salespersonName.isEmpty &&
-        customerName.isEmpty) {
+    final dateFmt = DateFormat('d MMM yyyy');
+
+    final hasLetterhead = businessName.isNotEmpty ||
+        dealerAddress.isNotEmpty ||
+        abn.isNotEmpty ||
+        dealerPhone.isNotEmpty ||
+        dealerEmail.isNotEmpty;
+    final hasMeta =
+        quoteNumber != null || issueDate != null || validUntil != null;
+    final hasParticipants =
+        salespersonName.isNotEmpty || customerName.isNotEmpty;
+
+    if (!hasLetterhead && !hasMeta && !hasParticipants) {
       return const SizedBox.shrink();
     }
+
+    final contactParts = <String>[
+      if (dealerPhone.isNotEmpty) 'Ph: $dealerPhone',
+      if (dealerEmail.isNotEmpty) dealerEmail,
+    ];
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (businessName.isNotEmpty)
-            Text(
-              businessName,
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w700,
-                color: theme.colorScheme.primary,
+          // Top row: letterhead (left) + quote meta (right)
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 3,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (businessName.isNotEmpty)
+                      Text(
+                        businessName,
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w700,
+                          color: theme.colorScheme.primary,
+                        ),
+                      ),
+                    if (dealerAddress.isNotEmpty) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        dealerAddress,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                    if (abn.isNotEmpty) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        'ABN: $abn',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
               ),
-            ),
-          if (salespersonName.isNotEmpty) ...[
-            const SizedBox(height: 2),
+              if (hasMeta)
+                Expanded(
+                  flex: 2,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      if (quoteNumber != null)
+                        Text(
+                          'Quote #$quoteNumber',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
+                          ),
+                          textAlign: TextAlign.right,
+                        ),
+                      if (issueDate != null) ...[
+                        const SizedBox(height: 2),
+                        Text(
+                          'Date: ${dateFmt.format(issueDate!)}',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                          textAlign: TextAlign.right,
+                        ),
+                      ],
+                      if (validUntil != null) ...[
+                        const SizedBox(height: 2),
+                        Text(
+                          'Valid until: ${dateFmt.format(validUntil!)}',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                          textAlign: TextAlign.right,
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+            ],
+          ),
+          if (contactParts.isNotEmpty) ...[
+            const SizedBox(height: 4),
             Text(
-              'Prepared by: $salespersonName',
+              contactParts.join('  |  '),
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
             ),
           ],
-          if (customerName.isNotEmpty) ...[
-            const SizedBox(height: 4),
-            Text(
-              'Quote for: $customerName',
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
           const SizedBox(height: 8),
           const Divider(height: 1),
+          if (hasParticipants) ...[
+            const SizedBox(height: 8),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (salespersonName.isNotEmpty)
+                  Expanded(
+                    child: Text(
+                      'Prepared by: $salespersonName',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
+                if (customerName.isNotEmpty)
+                  Expanded(
+                    child: Text(
+                      'Quote for: $customerName',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onSurface,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      textAlign: TextAlign.right,
+                    ),
+                  ),
+              ],
+            ),
+          ],
         ],
       ),
     );
